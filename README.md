@@ -1,7 +1,7 @@
 # nwitter (X 클론 코딩 프로젝트)🚀
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
-![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
+![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
 ![MSW](https://img.shields.io/badge/MSW-Mocking-yellow?style=for-the-badge)
 ![CSS Module](https://img.shields.io/badge/CSS%20Module-Scoped-green?style=for-the-badge)
 ![Biome](https://img.shields.io/badge/Biome-Linter%20%26%20Formatter-orange?style=for-the-badge)
