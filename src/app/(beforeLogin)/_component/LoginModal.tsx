@@ -1,74 +1,82 @@
 "use client";
 
-import style from "@/app/(beforeLogin)/_component/login.module.css";
-import { useState } from "react";
+import { ChangeEventHandler, useState } from "react";
+import { z } from "zod";
+
+// component
+import Modal from "./modal";
+
+// regex
+import { passwordRegex } from "../_config";
+
+const loginSchema = z.object({
+  id: z.string().min(1, { message: "아이디 입력값이 없습니다." }),
+  password: z
+    .string()
+    .min(1, { message: "비밀번호 입력값이 없습니다." })
+    .regex(passwordRegex, {
+      message:
+        "비밀번호는 최소 9자 이상이어야 하며, 숫자, 대문자, 특수문자를 각각 하나 이상 포함해야 합니다.",
+    }),
+});
 
 export default function LoginModal() {
-  const [id, setId] = useState();
-  const [password, setPassword] = useState();
-  const [message, setMessage] = useState();
-  const onSubmit = () => {};
-  const onClickClose = () => {};
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
-  const onChangeId = () => {};
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  const onChangePassword = () => {};
+    const result = loginSchema.safeParse({ id, password });
+
+    // 실패
+    if (result.error instanceof z.ZodError) {
+      const errorMsgs = result.error.issues.map((issue) => issue.message);
+      setMessage(errorMsgs.length > 0 ? errorMsgs[0] : "에러가 발생했습니다.");
+
+      return false;
+    }
+
+    // 로그인 처리
+    console.log("로그인 완료");
+  };
+
+  const onChangeId: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setId(e.target.value);
+  };
+
+  const onChangePassword: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setPassword(e.target.value);
+  };
 
   return (
-    <div className={style.modalBackground}>
-      <div className={style.modal}>
-        <div className={style.modalHeader}>
-          <button className={style.closeButton} onClick={onClickClose}>
-            <svg
-              width={24}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="r-18jsvk2 r-4qtqp9 r-yyyyoo r-z80fyv r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-19wmn03"
-            >
-              <g>
-                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-              </g>
-            </svg>
-          </button>
-          <div>로그인하세요.</div>
-        </div>
-        <form onSubmit={onSubmit}>
-          <div className={style.modalBody}>
-            <div className={style.inputDiv}>
-              <label className={style.inputLabel} htmlFor="id">
-                아이디
-              </label>
-              <input
-                id="id"
-                className={style.input}
-                value={id}
-                onChange={onChangeId}
-                type="text"
-                placeholder=""
-              />
-            </div>
-            <div className={style.inputDiv}>
-              <label className={style.inputLabel} htmlFor="password">
-                비밀번호
-              </label>
-              <input
-                id="password"
-                className={style.input}
-                value={password}
-                onChange={onChangePassword}
-                type="password"
-                placeholder=""
-              />
-            </div>
-          </div>
-          <div className={style.message}>{message}</div>
-          <div className={style.modalFooter}>
-            <button className={style.actionButton} disabled={!id && !password}>
-              로그인하기
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Modal>
+      <Modal.Header title="로그인하세요." />
+      <Modal.Form onSubmit={onSubmit}>
+        <Modal.FormWrapper>
+          <Modal.Input
+            label="아이디"
+            id="id"
+            value={id}
+            onChange={onChangeId}
+            type="text"
+            placeholderText=""
+          />
+          <Modal.Input
+            label="비밀번호"
+            id="password"
+            value={password}
+            onChange={onChangePassword}
+            type="password"
+            placeholderText=""
+          />
+          <Modal.Footer>
+            <Modal.Message msg={message || ""} />
+            <Modal.Button title="로그인하기" disabled={!id && !password} />
+          </Modal.Footer>
+        </Modal.FormWrapper>
+      </Modal.Form>
+    </Modal>
   );
 }
