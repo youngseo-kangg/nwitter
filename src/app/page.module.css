@@ -93,3 +93,11 @@
     font-size: 60px;
   }
 }
+
+@media (max-width: 466px) {
+  .main_container {
+    width: 100%;
+    padding: 0;
+    flex-direction: row;
+  }
+}
