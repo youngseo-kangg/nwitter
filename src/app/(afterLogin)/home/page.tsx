@@ -1,8 +1,23 @@
-export default function HomePage() {
+// component
+import Tab from "@/app/(afterLogin)/home/_component/Tab";
+import TabProvider from "@/app/(afterLogin)/home/_component/TabProvider";
+import PostForm from "@/app/(afterLogin)/home/_component/PostForm";
+// import Post from "@/app/(afterLogin)/_component/Post";
+
+// style
+import style from "./page.module.css";
+import Post from "../_component/Post";
+
+export default function Home() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Home Page</h1>
-      <p>여기는 홈 타임라인 페이지입니다.</p>
-    </div>
+    <main className={style.main}>
+      <TabProvider>
+        <Tab />
+        <PostForm />
+        <Post />
+        <Post />
+        <Post />
+      </TabProvider>
+    </main>
   );
 }
