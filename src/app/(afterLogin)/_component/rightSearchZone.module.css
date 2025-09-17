@@ -12,6 +12,9 @@
 .searchInExplore {
   width: 570px;
 }
+.searchInSearch {
+  width: 520px;
+}
 
 .search svg {
   margin-left: 20px;
@@ -35,6 +38,9 @@
 
 .searchFormInExplore {
   width: 570px;
+}
+.searchFormInSearch {
+  width: 520px;
 }
 
 .filterTitle {
