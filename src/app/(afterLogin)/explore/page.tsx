@@ -1,8 +1,29 @@
-export default function ExplorePage() {
+// components
+import SearchForm from "@/app/(afterLogin)/_component/SearchForm";
+import Trend from "@/app/(afterLogin)/_component/Trend";
+
+// style
+import style from "./explore.module.css";
+
+export default function Home() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Explore Page</h1>
-      <p>여기는 탐색 페이지입니다.</p>
-    </div>
+    <main className={style.main}>
+      <div className={style.formZone}>
+        <SearchForm />
+      </div>
+      <div className={style.trend}>
+        <h3>나를 위한 트렌드</h3>
+        <Trend />
+        <Trend />
+        <Trend />
+        <Trend />
+        <Trend />
+        <Trend />
+        <Trend />
+        <Trend />
+        <Trend />
+        <Trend />
+      </div>
+    </main>
   );
 }
