@@ -1,13 +1,16 @@
 .search {
   position: fixed;
   height: 42px;
-  width: 570px;
+  width: 350px;
   border-radius: 21px;
   background-color: rgb(239, 243, 244);
   margin-top: 6px;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
+}
+.searchInExplore {
+  width: 570px;
 }
 
 .search svg {
@@ -27,6 +30,10 @@
 
 .searchForm {
   margin-bottom: 60px;
+  width: inherit;
+}
+
+.searchFormInExplore {
   width: 570px;
 }
 
@@ -66,7 +73,7 @@
 }
 
 @media (max-width: 700px) {
-  .search {
+  .searchInExplore {
     width: calc(100% - 120px);
   }
 }
