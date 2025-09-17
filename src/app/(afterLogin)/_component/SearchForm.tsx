@@ -5,7 +5,7 @@ import style from "./rightSearchZone.module.css";
 
 const SearchForm = () => {
   return (
-    <div style={{ marginBottom: 60, width: "inherit" }}>
+    <div className={style.searchForm}>
       <form className={style.search}>
         <svg width={20} viewBox="0 0 24 24" aria-hidden="true">
           <g>

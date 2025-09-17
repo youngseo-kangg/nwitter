@@ -1,7 +1,7 @@
 .search {
   position: fixed;
   height: 42px;
-  width: inherit;
+  width: 570px;
   border-radius: 21px;
   background-color: rgb(239, 243, 244);
   margin-top: 6px;
@@ -22,6 +22,12 @@
   padding: 12px;
   margin-left: 5px;
   font-size: 15px;
+  width: calc(100% - 100px);
+}
+
+.searchForm {
+  margin-bottom: 60px;
+  width: 570px;
 }
 
 .filterTitle {
@@ -57,4 +63,10 @@
 
 .radio > div {
   flex: 1;
+}
+
+@media (max-width: 700px) {
+  .search {
+    width: calc(100% - 120px);
+  }
 }
