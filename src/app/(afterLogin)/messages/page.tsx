@@ -1,8 +1,21 @@
-export default function MessagesPage() {
+// component
+import Room from "@/app/(afterLogin)/messages/_component/Room";
+
+// style
+import style from "./message.module.css";
+
+export default function Home() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Messages Page</h1>
-      <p>여기는 메세지 페이지입니다.</p>
-    </div>
+    <main className={style.main}>
+      <div className={style.header}>
+        <h3>쪽지</h3>
+      </div>
+      <Room />
+      <Room />
+      <Room />
+      <Room />
+      <Room />
+      <Room />
+    </main>
   );
 }
