@@ -1,18 +1,41 @@
-"use client";
+// component
+import Post from "@/app/(afterLogin)/_component/Post";
+import BackButton from "@/app/(afterLogin)/_component/BackButton";
 
-import { useParams } from "next/navigation";
+// style
+import style from "./profile.module.css";
 
-export default function UserPage() {
-  // useParams 훅으로 동적 세그먼트 가져오기
-  const params = useParams();
-  const { username } = params as { username?: string };
+export default function Profile() {
+  const user = {
+    id: "yskangg",
+    nickname: "영서",
+    image: "/IMG_0426.jpeg",
+  };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>User Page</h1>
-      <p>
-        방문한 사용자: <strong>{username || "username 없음"}</strong>
-      </p>
-    </div>
+    <main className={style.main}>
+      <div className={style.header}>
+        <BackButton />
+        <h3 className={style.headerTitle}>{user.nickname}</h3>
+      </div>
+      <div className={style.userZone}>
+        <div className={style.userImage}>
+          <img src={user.image} alt={user.id} />
+        </div>
+        <div className={style.userName}>
+          <div>{user.nickname}</div>
+          <div>@{user.id}</div>
+        </div>
+        <button className={style.followButton}>팔로우</button>
+      </div>
+      <div>
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+      </div>
+    </main>
   );
 }

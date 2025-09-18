@@ -1,36 +1,30 @@
-import { useParams } from "next/navigation";
+// component
+import BackButton from "@/app/(afterLogin)/_component/BackButton";
+import Post from "@/app/(afterLogin)/_component/Post";
+import CommentForm from "@/app/(afterLogin)/[username]/status/[id]/_component/CommentForm";
 
-export default function StatusPage() {
-  // useParams 훅으로 URL 동적 세그먼트 가져오기
-  const params = useParams();
-  const { username, id } = params as {
-    username?: string;
-    id?: string;
-  };
+// style
+import style from "./singlePost.module.css";
 
+export default function SinglePost() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>유저의 트윗</h1>
-      <p>
-        여기서는 <strong>{username || "유저 없음"}</strong>의 특정 id 트윗을
-        확인합니다.
-      </p>
-
-      {/* URL 파라미터 확인용 */}
-      <div
-        style={{
-          marginTop: "2rem",
-          borderTop: "1px solid #ccc",
-          paddingTop: "1rem",
-        }}
-      >
-        <h3>URL 파라미터</h3>
-        <p>
-          <strong>Username:</strong> {username || "없음"}
-        </p>
-        <p>
-          <strong>ID:</strong> {id || "없음"}
-        </p>
+    <div className={style.main}>
+      <div className={style.header}>
+        <BackButton />
+        <h3 className={style.headerTitle}>게시하기</h3>
+      </div>
+      <Post />
+      <CommentForm />
+      <div>
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
       </div>
     </div>
   );
