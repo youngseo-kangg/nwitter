@@ -2,7 +2,7 @@ import Link from "next/link";
 import cx from "classnames";
 
 // style
-import style from "@/app/(afterLogin)/_component/post.module.css";
+import style from "@/app/(afterLogin)/_component/Post/post.module.css";
 
 type Props = {
   post: {

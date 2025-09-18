@@ -1,5 +1,5 @@
 // component
-import BackButton from "@/app/(afterLogin)/_component/BackButton";
+import { BackButton } from "@/app/(afterLogin)/_component/Buttons";
 import SearchForm from "@/app/(afterLogin)/_component/SearchForm";
 import Tab from "@/app/(afterLogin)/search/_component/Tab";
 import Post from "@/app/(afterLogin)/_component/Post";

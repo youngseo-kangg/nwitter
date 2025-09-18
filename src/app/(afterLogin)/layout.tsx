@@ -4,8 +4,8 @@ import Image from "next/image";
 
 // component
 import NavMenu from "./_component/NavMenu";
-import LogoutButton from "./_component/LogoutButton";
-import PostButton from "./_component/PostButton";
+import { LogoutButton } from "./_component/Buttons";
+import PostButton from "./_component/Post/PostButton";
 import FollowRecommend from "./_component/FollowRecommend";
 import TrendSection from "./_component/TrendSection";
 import RightSearchZone from "./_component/RightSearchZone";

@@ -9,7 +9,7 @@ dayjs.locale("ko");
 dayjs.extend(relativeTime);
 
 // components
-import BackButton from "@/app/(afterLogin)/_component/BackButton";
+import { BackButton } from "@/app/(afterLogin)/_component/Buttons";
 
 // style
 import style from "./chatRoom.module.css";

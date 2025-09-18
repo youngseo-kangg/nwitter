@@ -5,7 +5,7 @@ import cx from "classnames";
 import { usePathname } from "next/navigation";
 
 // style
-import style from "./rightSearchZone.module.css";
+import style from "./searchForm.module.css";
 
 type Props = { q?: string };
 

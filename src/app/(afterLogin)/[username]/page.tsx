@@ -1,6 +1,6 @@
 // component
 import Post from "@/app/(afterLogin)/_component/Post";
-import BackButton from "@/app/(afterLogin)/_component/BackButton";
+import { BackButton } from "@/app/(afterLogin)/_component/Buttons";
 
 // style
 import style from "./profile.module.css";
