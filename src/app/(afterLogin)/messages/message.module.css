@@ -53,3 +53,9 @@
 .roomChatInfo b {
   color: black;
 }
+
+@media (max-width: 700px) {
+  .main {
+    width: 100%;
+  }
+}

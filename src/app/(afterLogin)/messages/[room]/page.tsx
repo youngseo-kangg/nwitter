@@ -1,14 +1,18 @@
 import { faker } from "@faker-js/faker";
-import style from "./chatRoom.module.css";
 import Link from "next/link";
-import BackButton from "@/app/(afterLogin)/_component/BackButton";
 import cx from "classnames";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/ko";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
+import "dayjs/locale/ko";
 dayjs.locale("ko");
 dayjs.extend(relativeTime);
+
+// components
+import BackButton from "@/app/(afterLogin)/_component/BackButton";
+
+// style
+import style from "./chatRoom.module.css";
 
 export default function ChatRoom() {
   const user = {

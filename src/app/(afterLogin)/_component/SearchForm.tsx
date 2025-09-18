@@ -15,14 +15,14 @@ const SearchForm = ({ q }: Props) => {
   return (
     <div
       className={cx(style.searchForm, {
-        [style.searchFormInExplore]: pathname === "/explore",
-        [style.searchFormInSearch]: pathname === "/search",
+        [style.inExplore]: pathname === "/explore",
+        [style.inSearch]: pathname === "/search",
       })}
     >
       <form
         className={cx(style.search, {
-          [style.searchInExplore]: pathname === "/explore",
-          [style.searchInSearch]: pathname === "/search",
+          [style.inExplore]: pathname === "/explore",
+          [style.inSearch]: pathname === "/search",
         })}
       >
         <svg width={20} viewBox="0 0 24 24" aria-hidden="true">

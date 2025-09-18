@@ -93,3 +93,13 @@
 .list {
   margin-top: 110px;
 }
+
+@media (max-width: 700px) {
+  .main {
+    width: 100%;
+  }
+  .searchTop,
+  .homeFixed {
+    width: calc(100dvw - 100px);
+  }
+}

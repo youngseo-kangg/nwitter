@@ -33,6 +33,7 @@
 }
 .userImage img {
   width: 134px;
+  height: 134px;
   border-radius: 50%;
 }
 .userName {
@@ -75,4 +76,10 @@
 }
 .backButton:hover {
   background-color: rgba(15, 20, 25, 0.1);
+}
+
+@media (max-width: 700px) {
+  .main {
+    width: 100%;
+  }
 }

@@ -1,6 +1,8 @@
 import Link from "next/link";
-import style from "@/app/(afterLogin)/_component/post.module.css";
 import cx from "classnames";
+
+// style
+import style from "@/app/(afterLogin)/_component/post.module.css";
 
 type Props = {
   post: {
@@ -17,8 +19,8 @@ type Props = {
 };
 
 export default function PostImages({ post }: Props) {
-  if (!post.Images) return null;
-  if (!post.Images.length) return null;
+  if (!post.Images || !post.Images.length) return null;
+
   if (post.Images.length === 1) {
     return (
       <Link
@@ -33,6 +35,7 @@ export default function PostImages({ post }: Props) {
       </Link>
     );
   }
+
   if (post.Images.length === 2) {
     return (
       <div className={cx(style.postImageSection, style.twoImage)}>
@@ -53,6 +56,7 @@ export default function PostImages({ post }: Props) {
       </div>
     );
   }
+
   if (post.Images.length === 3) {
     return (
       <div className={cx(style.postImageSection, style.threeImage)}>
@@ -82,6 +86,7 @@ export default function PostImages({ post }: Props) {
       </div>
     );
   }
+
   if (post.Images.length === 4) {
     return (
       <div className={cx(style.postImageSection, style.fourImage)}>

@@ -9,10 +9,10 @@
   display: flex;
   align-items: center;
 }
-.searchInExplore {
+.search.inExplore {
   width: 570px;
 }
-.searchInSearch {
+.search.inSearch {
   width: 520px;
 }
 
@@ -79,7 +79,10 @@
 }
 
 @media (max-width: 700px) {
-  .searchInExplore {
+  .search.inExplore {
     width: calc(100% - 120px);
+  }
+  .search.inSearch {
+    width: calc(100% - 50px);
   }
 }
