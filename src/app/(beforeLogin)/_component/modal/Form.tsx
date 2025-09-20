@@ -1,8 +1,13 @@
-import { FormHTMLAttributes, PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
+import NextForm, { FormProps as NextFormProps } from "next/form";
 
 export default function Form({
-  onSubmit,
   children,
-}: FormHTMLAttributes<HTMLFormElement> & PropsWithChildren) {
-  return <form onSubmit={onSubmit}>{children}</form>;
+  ...props
+}: NextFormProps & PropsWithChildren) {
+  return (
+    <NextForm action={props.action} onSubmit={props.onSubmit}>
+      {children}
+    </NextForm>
+  );
 }
