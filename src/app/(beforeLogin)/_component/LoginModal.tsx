@@ -1,7 +1,9 @@
 "use client";
 
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, useState, FormEventHandler } from "react";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 // component
 import Modal from "./modal";
@@ -24,22 +26,23 @@ export default function LoginModal() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-
-    const result = loginSchema.safeParse({ id, password });
-
-    // 실패
-    if (result.error instanceof z.ZodError) {
-      const errorMsgs = result.error.issues.map((issue) => issue.message);
-      setMessage(errorMsgs.length > 0 ? errorMsgs[0] : "에러가 발생했습니다.");
-
-      return false;
+    setMessage("");
+    try {
+      const result = await signIn("credentials", {
+        username: id,
+        password,
+        redirect: false,
+      });
+      console.log(result);
+      router.replace("/home");
+    } catch (err) {
+      console.error(err);
+      setMessage("아이디와 비밀번호가 일치하지 않습니다.");
     }
-
-    // 로그인 처리
-    console.log("로그인 완료");
   };
 
   const onChangeId: ChangeEventHandler<HTMLInputElement> = (e) => {
