@@ -1,11 +1,14 @@
 "use client";
 
-import { ChangeEventHandler, FormEventHandler, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import { useFormStatus, useFormState } from "react-dom";
 import z from "zod";
 
 // component
 import Modal from "./modal";
+
+// data
+import onSubmit from "../_lib/signup";
 
 // regex
 import { passwordRegex } from "../_config";
@@ -24,110 +27,70 @@ const signupSchema = z.object({
   image: z.string().url().optional(), // 이미지 URL (선택 사항)
 });
 
+import style from "./signup.module.css";
+
+function showMessage(message: string | null | undefined) {
+  if (message === "no_id") {
+    return "아이디를 입력하세요.";
+  }
+  if (message === "no_name") {
+    return "닉네임을 입력하세요.";
+  }
+  if (message === "no_password") {
+    return "비밀번호를 입력하세요.";
+  }
+  if (message === "no_image") {
+    return "이미지를 업로드하세요.";
+  }
+  if (message === "user_exists") {
+    return "이미 사용 중인 아이디입니다.";
+  }
+  return "";
+}
+
 export default function SignupModal() {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [image, setImage] = useState("");
-  const [imageFile, setImageFile] = useState<File>();
-  const [message, setMessage] = useState("");
-  const router = useRouter();
-
-  const onChangeId: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setId(e.target.value);
-  };
-
-  const onChangePassword: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setPassword(e.target.value);
-  };
-  const onChangeNickname: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setNickname(e.target.value);
-  };
-  const onChangeImageFile: ChangeEventHandler<HTMLInputElement> = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImage(URL.createObjectURL(file)); // 미리보기 URL 생성
-    }
-  };
-
-  const onSubmit: FormEventHandler = (e) => {
-    e.preventDefault();
-
-    // 입력값 검증
-    const result = signupSchema.safeParse({ id, nickname, password, image });
-
-    if (!result.success) {
-      const errorMsgs = result.error.issues.map((issue) => issue.message);
-      setMessage(errorMsgs.length > 0 ? errorMsgs[0] : "에러가 발생했습니다.");
-
-      return false;
-    }
-
-    // fetch("http://localhost:9090/api/users", {
-    //   method: "post",
-    //   body: JSON.stringify({
-    //     id,
-    //     nickname,
-    //     image,
-    //     password,
-    //   }),
-    //   credentials: "include",
-    // })
-    //   .then((response: Response) => {
-    //     console.log(response.status);
-    //     if (response.status === 200) {
-    //       router.replace("/home");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.error(err);
-    //   });
-  };
+  const [state, formAction] = useFormState(onSubmit, { message: null });
+  const { pending } = useFormStatus();
 
   return (
     <>
       <Modal>
         <Modal.Header title="계정을 생성하세요." />
-        <Modal.Form onSubmit={onSubmit}>
+        <Modal.Form action={formAction}>
           <Modal.FormWrapper>
             <Modal.Input
               label="아이디"
               id="id"
-              value={id}
-              onChange={onChangeId}
               type="text"
               placeholderText=""
+              required
             />
             <Modal.Input
               label="닉네임"
               id="name"
-              value={nickname}
-              onChange={onChangeNickname}
               type="text"
               placeholderText=""
+              required
             />
             <Modal.Input
               label="비밀번호"
               id="password"
-              value={password}
-              onChange={onChangePassword}
               type="password"
               placeholderText=""
+              required
             />
             <Modal.Input
               label="프로필"
               id="image"
-              onChange={onChangeImageFile}
-              previewUrl={image}
               type="file"
               accept="image/*"
               placeholderText=""
+              required
             />
           </Modal.FormWrapper>
           <Modal.Footer>
-            {message && <Modal.Message msg={message} />}
-            <Modal.Button title="가입하기" disabled={!id && !password} />
+            <Modal.Button title="가입하기" type="submit" disabled={pending} />
+            <Modal.Message msg={showMessage(state?.message) || ""} />
           </Modal.Footer>
         </Modal.Form>
       </Modal>

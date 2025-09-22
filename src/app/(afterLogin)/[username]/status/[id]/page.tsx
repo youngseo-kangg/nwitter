@@ -1,5 +1,5 @@
 // component
-import BackButton from "@/app/(afterLogin)/_component/BackButton";
+import { BackButton } from "@/app/(afterLogin)/_component/Buttons";
 import Post from "@/app/(afterLogin)/_component/Post";
 import CommentForm from "@/app/(afterLogin)/[username]/status/[id]/_component/CommentForm";
 

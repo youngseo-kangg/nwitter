@@ -2,7 +2,7 @@
 import cx from "classnames";
 
 // style
-import style from "./post.module.css";
+import style from "../Post/post.module.css";
 
 type Props = {
   white?: boolean;

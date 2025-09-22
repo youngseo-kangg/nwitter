@@ -5,9 +5,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
 
 // component
-import ActionButtons from "@/app/(afterLogin)/_component/ActionButtons";
+import { ActionButtons } from "@/app/(afterLogin)/_component/Buttons";
 import PostLink from "./PostLink";
-import PostImages from "@/app/(afterLogin)/_component/PostImages";
+import PostImages from "@/app/(afterLogin)/_component/Post/PostImages";
 
 // style
 import style from "./post.module.css";
