@@ -2,6 +2,9 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+// api
+import { auth } from "@/auth";
+
 // component
 import NavMenu from "./_component/NavMenu";
 import { LogoutButton } from "./_component/Buttons";
@@ -21,22 +24,28 @@ type Props = {
   modal: ReactNode;
 };
 
-export default function AfterLoginLayout({ children, modal }: Props) {
+export default async function AfterLoginLayout({ children, modal }: Props) {
+  const session = await auth();
+
   return (
     <div className={style.container}>
       <header className={style.leftSectionWrapper}>
         <section className={style.leftSection}>
           <div className={style.leftSectionFixed}>
-            <Link className={style.logo} href="/home">
+            <Link className={style.logo} href={session?.user ? "/home" : "/"}>
               <div className={style.logoPill}>
                 <Image src={ZLogo} alt="z.com로고" width={40} height={40} />
               </div>
             </Link>
-            <nav>
-              <NavMenu />
-              <PostButton />
-            </nav>
-            <LogoutButton />
+            {session?.user && (
+              <>
+                <nav>
+                  <NavMenu />
+                  <PostButton />
+                </nav>
+                <LogoutButton />
+              </>
+            )}
           </div>
         </section>
       </header>

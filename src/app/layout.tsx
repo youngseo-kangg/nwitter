@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
+
+// style
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
+// component
 import { MSWProvider } from "@/app/_component/MSWComponent";
+import AuthSession from "./_component/AuthSessionProvider";
 
 if (
   process.env.NEXT_RUNTIME === "nodejs" &&
@@ -38,8 +43,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <MSWProvider>
-          {children}
-          {modal}
+          <AuthSession>
+            {children}
+            {modal}
+          </AuthSession>
         </MSWProvider>
       </body>
     </html>
