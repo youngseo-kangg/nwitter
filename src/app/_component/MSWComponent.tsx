@@ -17,14 +17,16 @@ const mockingEnabledPromise =
             print.warning();
           },
         });
-
         worker.use(...handlers);
 
-        // https://github.com/vercel/next.js/issues/69098 에러 관련 임시 처리
-        (module as any).hot?.dispose(() => {
-          worker.stop();
-        });
-        console.log(worker.listHandlers());
+        // 'module is not defined' 에러 관련 처리
+        // module 객체는 Node.js 환경에서만 정의 O ... 브라우저 환경(next dev 클라이언트 번들)에서는 module이 없어 에러!
+        if (typeof module !== "undefined") {
+          // https://github.com/vercel/next.js/issues/69098 에러 관련 임시 처리
+          (module as any).hot?.dispose(() => {
+            worker.stop();
+          });
+        }
       })
     : Promise.resolve();
 

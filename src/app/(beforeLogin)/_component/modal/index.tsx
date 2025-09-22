@@ -5,6 +5,7 @@ import style from "@/app/(beforeLogin)/_component/modal/modal.module.css";
 
 // component
 import Header from "./Header";
+import DefaultForm from "./DefaultForm";
 import Form from "./Form";
 import Footer from "./Footer";
 import Button from "./Button";
@@ -14,6 +15,7 @@ import FormWrapper from "./FormWrapper";
 
 type IModalWrapper = FC<PropsWithChildren<HTMLAttributes<HTMLDivElement>>> & {
   Header: typeof Header;
+  DefaultForm: typeof DefaultForm;
   Form: typeof Form;
   FormWrapper: typeof FormWrapper;
   Button: typeof Button;
@@ -31,6 +33,7 @@ const Modal: IModalWrapper = ({ children }) => {
 };
 
 Modal.Header = Header;
+Modal.DefaultForm = DefaultForm;
 Modal.Form = Form;
 Modal.FormWrapper = FormWrapper;
 Modal.Button = Button;

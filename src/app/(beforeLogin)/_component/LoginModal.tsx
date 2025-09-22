@@ -3,6 +3,8 @@
 import { ChangeEventHandler, useState, FormEventHandler } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+
+// api
 import { signIn } from "next-auth/react";
 
 // component
@@ -56,7 +58,7 @@ export default function LoginModal() {
   return (
     <Modal>
       <Modal.Header title="로그인하세요." />
-      <Modal.Form onSubmit={onSubmit}>
+      <Modal.DefaultForm onSubmit={onSubmit}>
         <Modal.FormWrapper>
           <Modal.Input
             label="아이디"
@@ -79,7 +81,7 @@ export default function LoginModal() {
             <Modal.Button title="로그인하기" disabled={!id && !password} />
           </Modal.Footer>
         </Modal.FormWrapper>
-      </Modal.Form>
+      </Modal.DefaultForm>
     </Modal>
   );
 }

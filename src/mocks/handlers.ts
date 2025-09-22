@@ -3,7 +3,7 @@ import { faker } from "@faker-js/faker";
 
 const User = [
   { id: "elonmusk", nickname: "Elon Musk", image: "/yRsRRjGO.jpg" },
-  { id: "zerohch0", nickname: "제로초", image: "/5Udwvqim.jpg" },
+  { id: "yskangg", nickname: "영서", image: "/IMG_0426.jpeg" },
   { id: "leoturtle", nickname: "레오", image: faker.image.avatar() },
 ];
 
@@ -13,13 +13,20 @@ export const handlers = [
   http.post(`${baseUrl}/api/login`, () => {
     console.log("로그인");
 
-    return HttpResponse.json(User[1], {
-      headers: {
-        "Set-Cookie": "connect.sid=msw-cookie;HttpOnly;Path=/",
+    return HttpResponse.json(
+      {
+        id: User[1].id,
+        name: User[1].nickname,
+        email: `${User[1].id}@example.com`, // email 필드는 꼭 있어야 함
+        image: User[1].image,
       },
-    });
+      {
+        headers: {
+          "Set-Cookie": "connect.sid=msw-cookie;HttpOnly;Path=/",
+        },
+      }
+    );
   }),
-
   http.post(`${baseUrl}/api/logout`, () => {
     console.log("로그아웃");
 
@@ -29,7 +36,6 @@ export const handlers = [
       },
     });
   }),
-
   http.post(`${baseUrl}/api/users`, async ({ request }) => {
     console.log("회원가입");
 

@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { signIn } from "@/auth";
 
 export default async (
   prevState: { message: string | null },
@@ -27,6 +28,7 @@ export default async (
 
   let shouldRedirect = false;
   try {
+    // 회원 가입
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`,
       {
@@ -41,8 +43,14 @@ export default async (
       return { message: "user_exists" };
     }
     console.log(await response.json());
-
     shouldRedirect = true;
+
+    // 로그인
+    await signIn("credentials", {
+      username: formData.get("id"),
+      password: formData.get("password"),
+      redirect: false,
+    });
   } catch (err) {
     console.error(err);
     return { message: null };
