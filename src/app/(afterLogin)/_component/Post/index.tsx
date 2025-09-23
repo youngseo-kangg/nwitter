@@ -12,25 +12,21 @@ import PostImages from "@/app/(afterLogin)/_component/Post/PostImages";
 // style
 import style from "./post.module.css";
 
+// type
+import { Post as IPost } from "@/model/post";
+
 dayjs.locale("ko"); // 한국 시간 적용
 dayjs.extend(relativeTime); // fromNow 사용
 
 type Props = {
   noImage?: boolean;
+  post: IPost;
 };
 
-export default function Post({ noImage }: Props) {
-  const target = {
-    postId: 1,
-    User: {
-      id: "yskangg",
-      nickname: "영서",
-      image: "/IMG_0426.jpeg",
-    },
-    content: "작업중",
-    createdAt: new Date(),
-    Images: [] as any[],
-  };
+export default function Post({ noImage, post }: Props) {
+  const target = post;
+
+  if (!target) return;
 
   if (Math.random() > 0.5 && !noImage) {
     target.Images.push(
