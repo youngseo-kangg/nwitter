@@ -1,18 +1,22 @@
 "use client";
 
-import style from "./followRecommend.module.css";
+import Link from "next/link";
 
-export default function FollowRecommend() {
+// type
+import { User } from "@/model/user";
+
+// style
+import style from "./followRecommendItem.module.css";
+
+type Props = {
+  user: User;
+};
+
+export default function FollowRecommend({ user }: Props) {
   const onFollow = () => {};
 
-  const user = {
-    id: "elonmusk",
-    nickname: "Elon Musk",
-    image: "/yRsRRjGO.jpg",
-  };
-
   return (
-    <div className={style.container}>
+    <Link href={`/${user.id}`} className={style.container}>
       <div className={style.userLogoSection}>
         <div className={style.userLogo}>
           <img src={user.image} alt={user.id} />
@@ -25,6 +29,6 @@ export default function FollowRecommend() {
       <div className={style.followButtonSection}>
         <button onClick={onFollow}>팔로우</button>
       </div>
-    </div>
+    </Link>
   );
 }

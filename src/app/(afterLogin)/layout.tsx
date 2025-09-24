@@ -10,9 +10,9 @@ import QueryProvider from "./_component/QueryProvider";
 import NavMenu from "./_component/NavMenu";
 import { LogoutButton } from "./_component/Buttons";
 import PostButton from "./_component/Post/PostButton";
-import FollowRecommend from "./_component/FollowRecommend";
 import TrendSection from "./_component/TrendSection";
 import RightSearchZone from "./_component/RightSearchZone";
+import FollowRecommendSection from "./_component/FollowRecommendSection";
 
 // style
 import style from "@/app/(afterLogin)/layout.module.css";
@@ -59,9 +59,7 @@ export default async function AfterLoginLayout({ children, modal }: Props) {
               <TrendSection />
               <div className={style.followRecommend}>
                 <h3>팔로우 추천</h3>
-                <FollowRecommend />
-                <FollowRecommend />
-                <FollowRecommend />
+                <FollowRecommendSection />
               </div>
             </section>
           </div>
