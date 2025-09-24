@@ -5,6 +5,7 @@ export async function getPostRecommends() {
       next: {
         tags: ["posts", "recommends"],
       },
+      cache: "no-store",
     }
   );
 

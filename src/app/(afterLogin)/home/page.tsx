@@ -6,29 +6,17 @@ import {
 
 // component
 import Tab from "@/app/(afterLogin)/home/_component/Tab";
-import TabProvider from "@/app/(afterLogin)/home/_component/TabProvider";
 import PostForm from "@/app/(afterLogin)/home/_component/PostForm";
-import PostRecommends from "./_component/PostRecommends";
+import TabDivider from "./_component/TabDivider";
+
+// context
+import TabProvider from "@/app/(afterLogin)/home/_component/TabProvider";
+
+// api
+import { getPostRecommends } from "./_lib/getPostRecommends";
 
 // style
 import style from "./page.module.css";
-
-async function getPostRecommends() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/postRecommends`,
-    {
-      next: {
-        tags: ["posts", "recommends"],
-      },
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
-}
 
 export default async function Home() {
   const queryClient = new QueryClient();
@@ -44,7 +32,7 @@ export default async function Home() {
         <TabProvider>
           <Tab />
           <PostForm />
-          <PostRecommends />
+          <TabDivider />
         </TabProvider>
       </HydrationBoundary>
     </main>

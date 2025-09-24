@@ -3,7 +3,7 @@
 import { createContext, ReactNode, useState } from "react";
 
 // type
-import { homeTabType } from "../_config";
+import { homeTabType } from "@/model/tab";
 
 export const TabContext = createContext({
   tab: "foryou" as homeTabType,

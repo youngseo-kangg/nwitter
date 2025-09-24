@@ -110,4 +110,56 @@ export const handlers = [
       },
     ]);
   }),
+  http.get(`${baseUrl}/api/followingPosts`, ({ request }) => {
+    const url = new URL(request.url);
+    return HttpResponse.json([
+      {
+        postId: 1,
+        User: User[1],
+        content: `this is 1st post of my following`,
+        Images: [{ imageId: 1, link: faker.image.urlLoremFlickr() }],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 2,
+        User: User[1],
+        content: `this is 2nd post of my following`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 3,
+        User: User[1],
+        content: `this is 3rd post of my following`,
+        Images: [],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 4,
+        User: User[1],
+        content: `this is 4th post of my following`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+          { imageId: 3, link: faker.image.urlLoremFlickr() },
+          { imageId: 4, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 5,
+        User: User[1],
+        content: `this is 5th post of my following`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+          { imageId: 3, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+    ]);
+  }),
 ];
