@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // style
 import style from "./rightSearchZone.module.css";
@@ -11,8 +11,21 @@ import SearchForm from "@/app/(afterLogin)/_component/SearchForm";
 
 export default function RightSearchZone() {
   const pathname = usePathname();
-  const onChangeFollow = () => {};
-  const onChangeAll = () => {};
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const onChangeFollow = () => {
+    // '내가 팔로우하는 사람들' 필터 on -> url에 "pf=on" 추가
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("pf", "on");
+    router.replace(`/search?${newSearchParams.toString()}`);
+  };
+  const onChangeAll = () => {
+    // '모든 사용자' 필터 on -> url에 "pf=on" 제거
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("pf");
+    router.replace(`/search?${newSearchParams.toString()}`);
+  };
 
   if (pathname === "/explore") {
     return null;

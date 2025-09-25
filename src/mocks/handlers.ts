@@ -59,7 +59,8 @@ export const handlers = [
   }),
   http.get(`${baseUrl}/api/postRecommends`, ({ request }) => {
     const url = new URL(request.url);
-    const cursor = parseInt(url.searchParams.get("cursor") as string) || 0;
+    const cursor = parseInt(url.searchParams.get("cursor") as string) || 0; // 페이지네이션 요소
+
     return HttpResponse.json([
       {
         postId: cursor + 1,
