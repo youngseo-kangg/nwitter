@@ -2,9 +2,9 @@ import { http, HttpResponse } from "msw";
 import { faker } from "@faker-js/faker";
 
 const User = [
-  { id: "elonmusk", nickname: "Elon Musk", image: "/yRsRRjGO.jpg" },
+  { id: "ysCook", nickname: "오늘은 내가 요리사", image: "/cooking.jpeg" },
   { id: "yskangg", nickname: "영서", image: "/IMG_0426.jpeg" },
-  { id: "leoturtle", nickname: "레오", image: faker.image.avatar() },
+  { id: "tommyTheCat", nickname: "토미", image: "/cat.jpeg" },
 ];
 
 function generateDate() {
