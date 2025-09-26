@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useContext } from "react";
 
-// type
-import { homeTabType } from "../_config";
+// context
+import { TabContext } from "@/app/(afterLogin)/home/_component/TabProvider";
 
 // style
 import style from "./tab.module.css";
 
 export default function Tab() {
-  const [tab, setTab] = useState<homeTabType>("foryou");
+  const { tab, setTab } = useContext(TabContext);
   const onClickForyou = () => {
     setTab("foryou");
   };

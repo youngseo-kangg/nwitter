@@ -11,7 +11,7 @@ import style from "./logoutButton.module.css";
 export default function LogoutButton() {
   const router = useRouter();
   const { data: me } = useSession();
-  console.log(me);
+  // console.log(me);
   if (!me?.user) return null;
 
   const onLogout = () => {

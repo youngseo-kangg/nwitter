@@ -6,12 +6,13 @@ import Image from "next/image";
 import { auth } from "@/auth";
 
 // component
+import QueryProvider from "./_component/QueryProvider";
 import NavMenu from "./_component/NavMenu";
 import { LogoutButton } from "./_component/Buttons";
 import PostButton from "./_component/Post/PostButton";
-import FollowRecommend from "./_component/FollowRecommend";
 import TrendSection from "./_component/TrendSection";
 import RightSearchZone from "./_component/RightSearchZone";
+import FollowRecommendSection from "./_component/FollowRecommendSection";
 
 // style
 import style from "@/app/(afterLogin)/layout.module.css";
@@ -49,22 +50,22 @@ export default async function AfterLoginLayout({ children, modal }: Props) {
           </div>
         </section>
       </header>
-      <div className={style.rightSectionWrapper}>
-        <div className={style.rightSectionInner}>
-          <main className={style.main}>{children}</main>
-          <section className={style.rightSection}>
-            <RightSearchZone />
-            <TrendSection />
-            <div className={style.followRecommend}>
-              <h3>팔로우 추천</h3>
-              <FollowRecommend />
-              <FollowRecommend />
-              <FollowRecommend />
-            </div>
-          </section>
+      <QueryProvider>
+        <div className={style.rightSectionWrapper}>
+          <div className={style.rightSectionInner}>
+            <main className={style.main}>{children}</main>
+            <section className={style.rightSection}>
+              <RightSearchZone />
+              <TrendSection />
+              <div className={style.followRecommend}>
+                <h3>팔로우 추천</h3>
+                <FollowRecommendSection />
+              </div>
+            </section>
+          </div>
         </div>
-      </div>
-      {modal}
+        {modal}
+      </QueryProvider>
     </div>
   );
 }

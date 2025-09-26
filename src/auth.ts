@@ -29,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const user = await authResponse.json();
-        console.log("user", user);
+        // console.log("user", user);
 
         return {
           email: user.id,

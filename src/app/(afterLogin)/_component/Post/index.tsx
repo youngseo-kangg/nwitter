@@ -12,34 +12,21 @@ import PostImages from "@/app/(afterLogin)/_component/Post/PostImages";
 // style
 import style from "./post.module.css";
 
+// type
+import { Post as IPost } from "@/model/post";
+
 dayjs.locale("ko"); // 한국 시간 적용
 dayjs.extend(relativeTime); // fromNow 사용
 
 type Props = {
   noImage?: boolean;
+  post: IPost;
 };
 
-export default function Post({ noImage }: Props) {
-  const target = {
-    postId: 1,
-    User: {
-      id: "yskangg",
-      nickname: "영서",
-      image: "/IMG_0426.jpeg",
-    },
-    content: "작업중",
-    createdAt: new Date(),
-    Images: [] as any[],
-  };
+export default function Post({ noImage, post }: Props) {
+  const target = post;
 
-  if (Math.random() > 0.5 && !noImage) {
-    target.Images.push(
-      { imageId: 1, link: faker.image.urlLoremFlickr() },
-      { imageId: 2, link: faker.image.urlLoremFlickr() },
-      { imageId: 3, link: faker.image.urlLoremFlickr() },
-      { imageId: 4, link: faker.image.urlLoremFlickr() }
-    );
-  }
+  if (!target) return;
 
   return (
     <PostLink post={target}>
@@ -63,9 +50,11 @@ export default function Post({ noImage }: Props) {
             </span>
           </div>
           <div>{target.content}</div>
-          <div>
-            <PostImages post={target} />
-          </div>
+          {!noImage && (
+            <div>
+              <PostImages post={target} />
+            </div>
+          )}
           <ActionButtons />
         </div>
       </div>

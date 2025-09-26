@@ -8,9 +8,9 @@ import Form from "next/form";
 // style
 import style from "./searchForm.module.css";
 
-type Props = { q?: string };
+type Props = { q?: string; pf?: string; f?: string };
 
-const SearchForm = ({ q }: Props) => {
+const SearchForm = ({ q, pf, f }: Props) => {
   const pathname = usePathname();
 
   return (
@@ -33,6 +33,8 @@ const SearchForm = ({ q }: Props) => {
           </g>
         </svg>
         <input type="search" name="q" defaultValue={q} />
+        <input type="hidden" name="pf" defaultValue={pf} />
+        <input type="hidden" name="f" defaultValue={f} />
       </Form>
     </div>
   );

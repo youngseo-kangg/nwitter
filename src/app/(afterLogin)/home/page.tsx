@@ -1,12 +1,16 @@
+import { Suspense } from "react";
+
 // component
 import Tab from "@/app/(afterLogin)/home/_component/Tab";
-import TabProvider from "@/app/(afterLogin)/home/_component/TabProvider";
 import PostForm from "@/app/(afterLogin)/home/_component/PostForm";
-// import Post from "@/app/(afterLogin)/_component/Post";
+import TabDividerSuspense from "./_component/TabDividerSuspense";
+import Loading from "@/app/(afterLogin)/home/loading";
+
+// context
+import TabProvider from "@/app/(afterLogin)/home/_component/TabProvider";
 
 // style
 import style from "./page.module.css";
-import Post from "../_component/Post";
 
 export default function Home() {
   return (
@@ -14,9 +18,9 @@ export default function Home() {
       <TabProvider>
         <Tab />
         <PostForm />
-        <Post />
-        <Post />
-        <Post />
+        <Suspense fallback={<Loading />}>
+          <TabDividerSuspense />
+        </Suspense>
       </TabProvider>
     </main>
   );
