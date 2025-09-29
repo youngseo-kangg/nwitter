@@ -102,9 +102,9 @@ export default function PostRecommends() {
   return (
     <>
       {data.pages.map((page, idx) => (
-        <Fragment key={idx}>
+        <Fragment key={`post_wrapper_${idx}`}>
           {page.map((postRecommends) => (
-            <Post key={postRecommends.postId} post={postRecommends} />
+            <Post key={`post_${postRecommends.postId}`} post={postRecommends} />
           ))}
         </Fragment>
       ))}

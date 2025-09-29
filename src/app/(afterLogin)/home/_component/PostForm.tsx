@@ -1,13 +1,21 @@
 "use client";
 
-import { ChangeEventHandler, FormEventHandler, useRef, useState } from "react";
+import {
+  ChangeEventHandler,
+  FormEvent,
+  FormEventHandler,
+  useRef,
+  useState,
+} from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // style
 import style from "./postForm.module.css";
 
 // type
 import { Session } from "next-auth";
+import { Post } from "@/model/post";
 
 type Props = {
   me: Session | null;
@@ -19,27 +27,63 @@ export default function PostForm({ me }: Props) {
   const [preview, setPreview] = useState<
     Array<{ dataUrl: string; file: File } | null>
   >([]);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async (e: FormEvent) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("content", content);
+      preview.forEach((p) => {
+        if (p) {
+          formData.append("images", p.file);
+        }
+      });
+
+      return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
+        method: "post",
+        credentials: "include",
+        body: formData,
+      });
+    },
+    onSuccess: async (response) => {
+      if (response.status === 201) {
+        setContent("");
+        setPreview([]);
+
+        const newPost = await response.json();
+        if (queryClient.getQueryData(["posts", "recommends"])) {
+          queryClient.setQueryData(
+            ["posts", "recommends"],
+            (prevData: { pages: Post[][] }) => {
+              const copiedPages = { ...prevData, pages: [...prevData.pages] };
+
+              copiedPages.pages[0] = [...copiedPages.pages[0]];
+              copiedPages.pages[0].unshift(newPost);
+
+              return copiedPages;
+            }
+          );
+        }
+
+        if (queryClient.getQueryData(["posts", "followings"])) {
+          queryClient.setQueryData(
+            ["posts", "followings"],
+            (prevData: { pages: Post[][] }) => {
+              const copiedPages = { ...prevData, pages: [...prevData.pages] };
+
+              copiedPages.pages[0] = [...copiedPages.pages[0]];
+              copiedPages.pages[0].unshift(newPost);
+
+              return copiedPages;
+            }
+          );
+        }
+      }
+    },
+  });
 
   const onChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     setContent(e.target.value);
-  };
-
-  const onSubmit: FormEventHandler = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("content", content);
-    preview.forEach((p) => {
-      if (p) {
-        formData.append("images", p.file);
-      }
-    });
-
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
-      method: "post",
-      credentials: "include",
-      body: formData,
-    });
   };
 
   const onClickButton = () => {
@@ -75,7 +119,7 @@ export default function PostForm({ me }: Props) {
   };
 
   return (
-    <form className={style.postForm} onSubmit={onSubmit}>
+    <form className={style.postForm} onSubmit={mutate}>
       <div className={style.postUserSection}>
         <div className={style.postUserImage}>
           <img

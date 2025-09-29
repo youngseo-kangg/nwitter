@@ -6,6 +6,7 @@ export async function getFollowRecommends() {
         tags: ["users", "followRecommends"],
       },
       cache: "no-store",
+      credentials: "include",
     }
   );
 
