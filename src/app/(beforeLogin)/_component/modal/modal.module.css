@@ -141,6 +141,10 @@
 .message {
   font-size: 13px;
   margin-bottom: 5px;
+  color: red;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
 }
 
 @media (max-width: 466px) {

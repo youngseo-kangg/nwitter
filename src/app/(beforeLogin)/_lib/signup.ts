@@ -26,9 +26,9 @@ export default async (
     return { message: "no_image" };
   }
 
+  formData.set("nickname", formData.get("name") as string);
   let shouldRedirect = false;
   try {
-    // 회원 가입
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`,
       {
@@ -38,14 +38,19 @@ export default async (
       }
     );
     console.log(response.status);
-
     if (response.status === 403) {
       return { message: "user_exists" };
+    } else if (response.status === 400) {
+      return {
+        message: (await response.json()).data[0],
+        id: formData.get("id"),
+        nickname: formData.get("nickname"),
+        password: formData.get("password"),
+        image: formData.get("image"),
+      };
     }
     console.log(await response.json());
     shouldRedirect = true;
-
-    // 로그인
     await signIn("credentials", {
       username: formData.get("id"),
       password: formData.get("password"),
@@ -59,6 +64,5 @@ export default async (
   if (shouldRedirect) {
     redirect("/home"); // try/catch문 안에서 X
   }
-
   return { message: null };
 };

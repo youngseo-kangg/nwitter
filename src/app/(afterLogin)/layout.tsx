@@ -44,7 +44,7 @@ export default async function AfterLoginLayout({ children, modal }: Props) {
                   <NavMenu />
                   <PostButton />
                 </nav>
-                <LogoutButton />
+                <LogoutButton me={session} />
               </>
             )}
           </div>

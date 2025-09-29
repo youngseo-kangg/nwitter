@@ -11,7 +11,7 @@ import AuthSession from "./_component/AuthSessionProvider";
 if (
   process.env.NEXT_RUNTIME === "nodejs" && // node.js 환경에서 돌아가면서
   process.env.NODE_ENV !== "production" && // 배포 이외 경우면서
-  process.env.MSW_ENABLED !== "false" // MSW_ENABLED가 true일때
+  process.env.NEXT_PUBLIC_MSW_ENABLED !== "false" // MSW_ENABLED가 true일때
 ) {
   // 서버 컴포넌트 일때는 @/mocks/http 사용
   const { server } = require("@/mocks/http");

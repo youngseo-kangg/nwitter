@@ -6,7 +6,10 @@ import { handlers } from "@/mocks/handlers";
 const mockingEnabledPromise =
   typeof window !== "undefined" // 브라우저 환경에서는 @/mocks/browser 사용
     ? import("@/mocks/browser").then(async ({ default: worker }) => {
-        if (process.env.NODE_ENV === "production") {
+        if (
+          process.env.NODE_ENV === "production" ||
+          process.env.NEXT_PUBLIC_MSW_ENABLED === "false"
+        ) {
           return;
         }
         await worker.start({

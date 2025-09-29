@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb", // 크기 제한 상향
     },
   },
+  async rewrites() {
+    return [
+      {
+        source: "/upload/:slug",
+        destination: `${process.env.NEXT_PUBLIC_BASE_URL}/:slug`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

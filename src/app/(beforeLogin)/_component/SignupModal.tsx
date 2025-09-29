@@ -1,6 +1,5 @@
 "use client";
 
-import { redirect } from "next/navigation";
 import { useFormStatus, useFormState } from "react-dom";
 import z from "zod";
 
@@ -27,8 +26,6 @@ const signupSchema = z.object({
   image: z.string().url().optional(), // 이미지 URL (선택 사항)
 });
 
-import style from "./signup.module.css";
-
 function showMessage(message: string | null | undefined) {
   if (message === "no_id") {
     return "아이디를 입력하세요.";
@@ -45,12 +42,17 @@ function showMessage(message: string | null | undefined) {
   if (message === "user_exists") {
     return "이미 사용 중인 아이디입니다.";
   }
-  return "";
+  if (message === "nickname must be a string") {
+    return "닉네임이 필요합니다.";
+  }
+
+  return message;
 }
 
 export default function SignupModal() {
   const [state, formAction] = useFormState(onSubmit, { message: null });
   const { pending } = useFormStatus();
+  console.log("state", state);
 
   return (
     <>
@@ -61,31 +63,39 @@ export default function SignupModal() {
             <Modal.Input
               label="아이디"
               id="id"
+              name="id"
               type="text"
               placeholderText=""
               required
+              defaultValue={state.id as string}
             />
             <Modal.Input
               label="닉네임"
               id="name"
+              name="name"
               type="text"
               placeholderText=""
               required
+              defaultValue={state.nickname as string}
             />
             <Modal.Input
               label="비밀번호"
               id="password"
+              name="password"
               type="password"
               placeholderText=""
               required
+              defaultValue={state.password as string}
             />
             <Modal.Input
               label="프로필"
               id="image"
+              name="image"
               type="file"
               accept="image/*"
               placeholderText=""
               required
+              defaultValue={state.image as string}
             />
           </Modal.FormWrapper>
           <Modal.Footer>

@@ -13,7 +13,7 @@ import Post from "@/app/(afterLogin)/_component/Post";
 import { Post as IPost } from "@/model/post";
 
 // style
-import styles from "@/app/(afterLogin)/home/home.module.css";
+import styles from "@/app/(afterLogin)/home/page.module.css";
 
 export default function PostRecommends() {
   const ref = useRef<HTMLDivElement | null>(null);

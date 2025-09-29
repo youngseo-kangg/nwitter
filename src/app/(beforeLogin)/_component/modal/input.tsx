@@ -15,6 +15,7 @@ export default function Input({
   id,
   type,
   value,
+  name,
   previewUrl,
   onChange,
 }: Props) {
@@ -39,6 +40,7 @@ export default function Input({
           <input
             id={id}
             className={style.input}
+            name={name}
             type={type}
             placeholder={placeholderText}
             value={type === "file" ? undefined : value}
@@ -49,6 +51,7 @@ export default function Input({
       ) : (
         <input
           id={id}
+          name={name}
           className={style.input}
           type={type}
           placeholder={placeholderText}
