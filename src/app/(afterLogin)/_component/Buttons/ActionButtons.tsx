@@ -1,21 +1,306 @@
 "use client";
+
+import { MouseEventHandler } from "react";
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import cx from "classnames";
 
 // style
 import style from "../Post/post.module.css";
 
+// type
+import { Post } from "@/model/post";
+
 type Props = {
   white?: boolean;
+  post: Post;
 };
 
-export default function ActionButtons({ white }: Props) {
-  const commented = false;
-  const reposted = false;
-  const liked = false;
+export default function ActionButtons({ white, post }: Props) {
+  const queryClient = useQueryClient();
+  console.log(post);
+  const session = useSession();
+
+  const commented = post.Comments.find(
+    (v) => v.userId === session.data?.user?.email
+  );
+  const reposted = post.Reposts.find(
+    (v) => v.userId === session.data?.user?.email
+  );
+  const liked = post.Hearts.find((v) => v.userId === session.data?.user?.email);
+
+  const heart = useMutation({
+    mutationFn: () => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/heart`,
+        {
+          method: "post",
+          credentials: "include",
+        }
+      );
+    },
+    onMutate: () => {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+
+          if (value && "pages" in value) {
+            const postGroup = value.pages
+              .flat()
+              .find((v) => v.postId === post.postId);
+            if (postGroup) {
+              const postGroupIdx = value.pages.findIndex((v) =>
+                v.includes(postGroup)
+              );
+              const postIdx = value.pages[postGroupIdx].findIndex(
+                (v) => v.postId === post.postId
+              );
+              const newValue = { ...value };
+
+              value.pages = { ...value.pages };
+              value.pages[postGroupIdx] = [...value.pages[postGroupIdx]];
+
+              newValue.pages[postGroupIdx][postIdx] = {
+                ...newValue.pages[postGroupIdx][postIdx],
+                Hearts: [
+                  ...newValue.pages[postGroupIdx][postIdx].Hearts,
+                  { userId: session.data?.user?.email as string },
+                ],
+                _count: {
+                  ...newValue.pages[postGroupIdx][postIdx]._count,
+                  Hearts:
+                    newValue.pages[postGroupIdx][postIdx]._count.Hearts + 1,
+                },
+              };
+
+              queryClient.setQueryData(queryKey, newValue);
+            }
+          } else if (value) {
+            if (post.postId === value.postId) {
+              // 싱글 포스트인 경우 -> newValue 내 Hearts, _count 내 Hearts 업데이트
+              const newValue = {
+                ...value,
+                Hearts: [{ userId: session?.data?.user?.email as string }],
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, newValue);
+            }
+          }
+        }
+      });
+    },
+    onError: () => {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+
+          if (value && "pages" in value) {
+            const postGroup = value.pages
+              .flat()
+              .find((v) => v.postId === post.postId);
+            if (postGroup) {
+              const postGroupIdx = value.pages.findIndex((v) =>
+                v.includes(postGroup)
+              );
+              const postIdx = value.pages[postGroupIdx].findIndex(
+                (v) => v.postId === post.postId
+              );
+              const newValue = { ...value };
+
+              value.pages = { ...value.pages };
+              value.pages[postGroupIdx] = [...value.pages[postGroupIdx]];
+
+              newValue.pages[postGroupIdx][postIdx] = {
+                ...newValue.pages[postGroupIdx][postIdx],
+                Hearts: newValue.pages[postGroupIdx][postIdx].Hearts.filter(
+                  (v) => v.userId !== (session.data?.user?.email as string)
+                ),
+                _count: {
+                  ...newValue.pages[postGroupIdx][postIdx]._count,
+                  Hearts:
+                    newValue.pages[postGroupIdx][postIdx]._count.Hearts - 1,
+                },
+              };
+
+              queryClient.setQueryData(queryKey, newValue);
+            }
+          } else if (value) {
+            if (post.postId === value.postId) {
+              // 싱글 포스트인 경우 -> newValue 내 Hearts, _count 내 Hearts 업데이트
+              const newValue = {
+                ...value,
+                Hearts: value.Hearts.filter(
+                  (heart) =>
+                    heart.userId !== (session.data?.user?.email as string)
+                ),
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts - 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, newValue);
+            }
+          }
+        }
+      });
+    },
+    onSettled: () => {},
+  });
+
+  const unHeart = useMutation({
+    mutationFn: () => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/heart`,
+        {
+          method: "delete",
+          credentials: "include",
+        }
+      );
+    },
+    onMutate: () => {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+
+          if (value && "pages" in value) {
+            const postGroup = value.pages
+              .flat()
+              .find((v) => v.postId === post.postId);
+            if (postGroup) {
+              const postGroupIdx = value.pages.findIndex((v) =>
+                v.includes(postGroup)
+              );
+              const postIdx = value.pages[postGroupIdx].findIndex(
+                (v) => v.postId === post.postId
+              );
+              const newValue = { ...value };
+
+              value.pages = { ...value.pages };
+              value.pages[postGroupIdx] = [...value.pages[postGroupIdx]];
+
+              newValue.pages[postGroupIdx][postIdx] = {
+                ...newValue.pages[postGroupIdx][postIdx],
+                Hearts: newValue.pages[postGroupIdx][postIdx].Hearts.filter(
+                  (v) => v.userId !== (session.data?.user?.email as string)
+                ),
+                _count: {
+                  ...newValue.pages[postGroupIdx][postIdx]._count,
+                  Hearts:
+                    newValue.pages[postGroupIdx][postIdx]._count.Hearts - 1,
+                },
+              };
+
+              queryClient.setQueryData(queryKey, newValue);
+            }
+          } else if (value) {
+            if (post.postId === value.postId) {
+              // 싱글 포스트인 경우 -> newValue 내 Hearts, _count 내 Hearts 업데이트
+              const newValue = {
+                ...value,
+                Hearts: value.Hearts.filter(
+                  (heart) =>
+                    heart.userId !== (session.data?.user?.email as string)
+                ),
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts - 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, newValue);
+            }
+          }
+        }
+      });
+    },
+    onError: () => {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+
+          if (value && "pages" in value) {
+            const postGroup = value.pages
+              .flat()
+              .find((v) => v.postId === post.postId);
+            if (postGroup) {
+              const postGroupIdx = value.pages.findIndex((v) =>
+                v.includes(postGroup)
+              );
+              const postIdx = value.pages[postGroupIdx].findIndex(
+                (v) => v.postId === post.postId
+              );
+              const newValue = { ...value };
+
+              value.pages = { ...value.pages };
+              value.pages[postGroupIdx] = [...value.pages[postGroupIdx]];
+
+              newValue.pages[postGroupIdx][postIdx] = {
+                ...newValue.pages[postGroupIdx][postIdx],
+                Hearts: [
+                  ...newValue.pages[postGroupIdx][postIdx].Hearts,
+                  { userId: session.data?.user?.email as string },
+                ],
+                _count: {
+                  ...newValue.pages[postGroupIdx][postIdx]._count,
+                  Hearts:
+                    newValue.pages[postGroupIdx][postIdx]._count.Hearts + 1,
+                },
+              };
+
+              queryClient.setQueryData(queryKey, newValue);
+            }
+          } else if (value) {
+            if (post.postId === value.postId) {
+              // 싱글 포스트인 경우 -> newValue 내 Hearts, _count 내 Hearts 업데이트
+              const newValue = {
+                ...value,
+                Hearts: [{ userId: session?.data?.user?.email as string }],
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, newValue);
+            }
+          }
+        }
+      });
+    },
+    onSettled: () => {},
+  });
 
   const onClickComment = () => {};
   const onClickRepost = () => {};
-  const onClickHeart = () => {};
+  const onClickHeart: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+    if (liked) {
+      unHeart.mutate();
+    } else {
+      heart.mutate();
+    }
+  };
 
   return (
     <div className={style.actionButtons}>
@@ -33,7 +318,7 @@ export default function ActionButtons({ white }: Props) {
             </g>
           </svg>
         </button>
-        <div className={style.count}>{1 || ""}</div>
+        <div className={style.count}>{post._count.Comments}</div>
       </div>
       <div
         className={cx(
@@ -49,7 +334,7 @@ export default function ActionButtons({ white }: Props) {
             </g>
           </svg>
         </button>
-        <div className={style.count}>{1 || ""}</div>
+        <div className={style.count}>{post._count.Reposts}</div>
       </div>
       <div
         className={cx([
@@ -65,7 +350,7 @@ export default function ActionButtons({ white }: Props) {
             </g>
           </svg>
         </button>
-        <div className={style.count}>{0 || ""}</div>
+        <div className={style.count}>{post._count.Hearts}</div>
       </div>
     </div>
   );
