@@ -14,6 +14,7 @@ import CommentForm from "@/app/(afterLogin)/[username]/status/[id]/_component/Co
 import { getSinglePost } from "../../../_lib/getSinglePost";
 import { getComments } from "../../../_lib/getComments";
 import { getUserServer } from "../../_lib/getUserServer";
+import { getSinglePostServer } from "@/app/(afterLogin)/_lib/getSinglePostServer";
 
 // style
 import style from "./singlePost.module.css";
@@ -22,7 +23,6 @@ import style from "./singlePost.module.css";
 import { Metadata } from "next";
 import { User } from "@/model/user";
 import { Post } from "@/model/post";
-import { getSinglePostServer } from "@/app/(afterLogin)/_lib/getSinglePostServer";
 
 type Props = {
   params: { id: string; username: string };
