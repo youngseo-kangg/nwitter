@@ -22,16 +22,16 @@ export default function FollowRecommend({ user }: Props) {
   const followed = !!user.Followers?.find((v) => v.id === session?.user?.email);
 
   const follow = useMutation({
-    mutationFn: () => {
+    mutationFn: (userId: string) => {
       return fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${user.id}/follow`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${userId}/follow`,
         {
           method: "post",
           credentials: "include",
         }
       );
     },
-    onMutate: () => {
+    onMutate: (userId: string) => {
       const followRecommendsValues: User[] | undefined =
         queryClient.getQueryData(["users", "followRecommends"]);
 
@@ -39,24 +39,28 @@ export default function FollowRecommend({ user }: Props) {
         const targetIdx = followRecommendsValues.findIndex(
           (v) => v.id === user.id
         );
-        const copiedValues = [...followRecommendsValues];
 
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: [{ id: session?.user?.email as string }],
-          _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers + 1,
-          },
-        };
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
 
-        queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: [{ id: session?.user?.email as string }],
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers + 1,
+            },
+          };
+
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
       }
 
       const userValues: User | undefined = queryClient.getQueryData([
         "users",
         user.id,
       ]);
+
       if (userValues) {
         const copiedValues = {
           ...userValues,
@@ -67,10 +71,10 @@ export default function FollowRecommend({ user }: Props) {
           },
         };
 
-        queryClient.setQueryData(["users", user.id], copiedValues);
+        queryClient.setQueryData(["users", userId], copiedValues);
       }
     },
-    onError: () => {
+    onError: (userId: string) => {
       const followRecommendsValues: User[] | undefined =
         queryClient.getQueryData(["users", "followRecommends"]);
 
@@ -78,81 +82,27 @@ export default function FollowRecommend({ user }: Props) {
         const targetIdx = followRecommendsValues.findIndex(
           (v) => v.id === user.id
         );
-        const copiedValues = [...followRecommendsValues];
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
 
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: copiedValues[targetIdx].Followers.filter(
-            (v) => v.id !== (session?.user?.email as string)
-          ),
-          _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers - 1,
-          },
-        };
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: copiedValues[targetIdx].Followers.filter(
+              (v) => v.id !== (session?.user?.email as string)
+            ),
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers - 1,
+            },
+          };
 
-        queryClient.setQueryData(["users", "followRecommends"], copiedValues);
-      }
-
-      const userValues: User | undefined = queryClient.getQueryData([
-        "users",
-        user.id,
-      ]);
-      if (userValues) {
-        const copiedValues = {
-          ...userValues,
-          Followers: userValues.Followers.filter(
-            (v) => v.id !== (session?.user?.email as string)
-          ),
-          _count: {
-            ...userValues._count,
-            Followers: userValues._count?.Followers - 1,
-          },
-        };
-
-        queryClient.setQueryData(["users", user.id], copiedValues);
-      }
-    },
-    onSettled: () => {},
-  });
-
-  const unFollow = useMutation({
-    mutationFn: () => {
-      return fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${user.id}/follow`,
-        {
-          method: "delete",
-          credentials: "include",
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
         }
-      );
-    },
-    onMutate: () => {
-      const followRecommendsValues: User[] | undefined =
-        queryClient.getQueryData(["users", "followRecommends"]);
-
-      if (followRecommendsValues) {
-        const targetIdx = followRecommendsValues.findIndex(
-          (v) => v.id === user.id
-        );
-        const copiedValues = [...followRecommendsValues];
-
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: copiedValues[targetIdx].Followers.filter(
-            (v) => v.id !== (session?.user?.email as string)
-          ),
-          _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers - 1,
-          },
-        };
-
-        queryClient.setQueryData(["users", "followRecommends"], copiedValues);
       }
 
       const userValues: User | undefined = queryClient.getQueryData([
         "users",
-        user.id,
+        userId,
       ]);
       if (userValues) {
         const copiedValues = {
@@ -166,10 +116,23 @@ export default function FollowRecommend({ user }: Props) {
           },
         };
 
-        queryClient.setQueryData(["users", user.id], copiedValues);
+        queryClient.setQueryData(["users", userId], copiedValues);
       }
     },
-    onError: () => {
+    onSettled: () => {},
+  });
+
+  const unFollow = useMutation({
+    mutationFn: (userId: string) => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${userId}/follow`,
+        {
+          method: "delete",
+          credentials: "include",
+        }
+      );
+    },
+    onMutate: (userId: string) => {
       const followRecommendsValues: User[] | undefined =
         queryClient.getQueryData(["users", "followRecommends"]);
 
@@ -177,41 +140,83 @@ export default function FollowRecommend({ user }: Props) {
         const targetIdx = followRecommendsValues.findIndex(
           (v) => v.id === user.id
         );
-        const copiedValues = [...followRecommendsValues];
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
 
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: [
-            ...copiedValues[targetIdx].Followers,
-            { id: session?.user?.email as string },
-          ],
-          _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers + 1,
-          },
-        };
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: copiedValues[targetIdx].Followers.filter(
+              (v) => v.id !== (session?.user?.email as string)
+            ),
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers - 1,
+            },
+          };
 
-        queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
       }
 
       const userValues: User | undefined = queryClient.getQueryData([
         "users",
-        user.id,
+        userId,
       ]);
       if (userValues) {
         const copiedValues = {
           ...userValues,
-          Followers: [
-            ...userValues.Followers,
-            { id: session?.user?.email as string },
-          ],
+          Followers: userValues.Followers.filter(
+            (v) => v.id !== (session?.user?.email as string)
+          ),
           _count: {
             ...userValues._count,
-            Followers: userValues._count?.Followers + 1,
+            Followers: userValues._count.Followers - 1,
           },
         };
 
-        queryClient.setQueryData(["users", user.id], copiedValues);
+        console.log(copiedValues);
+        queryClient.setQueryData(["users", userId], copiedValues);
+      }
+    },
+    onError: (userId: string) => {
+      const followRecommendsValues: User[] | undefined =
+        queryClient.getQueryData(["users", "followRecommends"]);
+
+      if (followRecommendsValues) {
+        const targetIdx = followRecommendsValues.findIndex(
+          (v) => v.id === user.id
+        );
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
+
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: [{ id: session?.user?.email as string }],
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers + 1,
+            },
+          };
+
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
+      }
+
+      const userValues: User | undefined = queryClient.getQueryData([
+        "users",
+        userId,
+      ]);
+      if (userValues) {
+        const copiedValues = {
+          ...userValues,
+          Followers: [{ id: session?.user?.email as string }],
+          _count: {
+            ...userValues._count,
+            Followers: userValues._count.Followers + 1,
+          },
+        };
+
+        queryClient.setQueryData(["users", userId], copiedValues);
       }
     },
     onSettled: () => {},
@@ -222,9 +227,9 @@ export default function FollowRecommend({ user }: Props) {
     e.preventDefault();
 
     if (followed) {
-      unFollow.mutate();
+      unFollow.mutate(user.id);
     } else {
-      follow.mutate();
+      follow.mutate(user.id);
     }
   };
 

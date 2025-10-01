@@ -40,6 +40,7 @@ export default function UserInfo({ username }: Props) {
   }
 
   const followed = user.Followers?.find((v) => v.id === session?.user?.email);
+
   const follow = useMutation({
     mutationFn: (userId: string) => {
       return fetch(
@@ -50,7 +51,7 @@ export default function UserInfo({ username }: Props) {
         }
       );
     },
-    onMutate: () => {
+    onMutate: (userId: string) => {
       const followRecommendsValues: User[] | undefined =
         queryClient.getQueryData(["users", "followRecommends"]);
 
@@ -58,21 +59,21 @@ export default function UserInfo({ username }: Props) {
         const targetIdx = followRecommendsValues.findIndex(
           (v) => v.id === user.id
         );
-        const copiedValues = [...followRecommendsValues];
 
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: [
-            ...copiedValues[targetIdx].Followers,
-            { id: session?.user?.email as string },
-          ],
-          _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers + 1,
-          },
-        };
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
 
-        queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: [{ id: session?.user?.email as string }],
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers + 1,
+            },
+          };
+
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
       }
 
       const userValues: User | undefined = queryClient.getQueryData([
@@ -83,20 +84,17 @@ export default function UserInfo({ username }: Props) {
       if (userValues) {
         const copiedValues = {
           ...userValues,
-          Followers: [
-            ...userValues.Followers,
-            { id: session?.user?.email as string },
-          ],
+          Followers: [{ id: session?.user?.email as string }],
           _count: {
             ...userValues._count,
             Followers: userValues._count.Followers + 1,
           },
         };
 
-        queryClient.setQueryData(["users", user.id], copiedValues);
+        queryClient.setQueryData(["users", userId], copiedValues);
       }
     },
-    onError: () => {
+    onError: (userId: string) => {
       const followRecommendsValues: User[] | undefined =
         queryClient.getQueryData(["users", "followRecommends"]);
 
@@ -104,25 +102,27 @@ export default function UserInfo({ username }: Props) {
         const targetIdx = followRecommendsValues.findIndex(
           (v) => v.id === user.id
         );
-        const copiedValues = [...followRecommendsValues];
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
 
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: copiedValues[targetIdx].Followers.filter(
-            (v) => v.id !== (session?.user?.email as string)
-          ),
-          _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers - 1,
-          },
-        };
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: copiedValues[targetIdx].Followers.filter(
+              (v) => v.id !== (session?.user?.email as string)
+            ),
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers - 1,
+            },
+          };
 
-        queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
       }
 
       const userValues: User | undefined = queryClient.getQueryData([
         "users",
-        user.id,
+        userId,
       ]);
       if (userValues) {
         const copiedValues = {
@@ -136,7 +136,7 @@ export default function UserInfo({ username }: Props) {
           },
         };
 
-        queryClient.setQueryData(["users", user.id], copiedValues);
+        queryClient.setQueryData(["users", userId], copiedValues);
       }
     },
     onSettled: () => {},
@@ -152,7 +152,7 @@ export default function UserInfo({ username }: Props) {
         }
       );
     },
-    onMutate: () => {
+    onMutate: (userId: string) => {
       const followRecommendsValues: User[] | undefined =
         queryClient.getQueryData(["users", "followRecommends"]);
 
@@ -160,25 +160,27 @@ export default function UserInfo({ username }: Props) {
         const targetIdx = followRecommendsValues.findIndex(
           (v) => v.id === user.id
         );
-        const copiedValues = [...followRecommendsValues];
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
 
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: copiedValues[targetIdx].Followers.filter(
-            (v) => v.id !== (session?.user?.email as string)
-          ),
-          _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers - 1,
-          },
-        };
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: copiedValues[targetIdx].Followers.filter(
+              (v) => v.id !== (session?.user?.email as string)
+            ),
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers - 1,
+            },
+          };
 
-        queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
       }
 
       const userValues: User | undefined = queryClient.getQueryData([
         "users",
-        user.id,
+        userId,
       ]);
       if (userValues) {
         const copiedValues = {
@@ -192,10 +194,11 @@ export default function UserInfo({ username }: Props) {
           },
         };
 
-        queryClient.setQueryData(["users", user.id], copiedValues);
+        console.log(copiedValues);
+        queryClient.setQueryData(["users", userId], copiedValues);
       }
     },
-    onError: () => {
+    onError: (userId: string) => {
       const followRecommendsValues: User[] | undefined =
         queryClient.getQueryData(["users", "followRecommends"]);
 
@@ -203,44 +206,37 @@ export default function UserInfo({ username }: Props) {
         const targetIdx = followRecommendsValues.findIndex(
           (v) => v.id === user.id
         );
-        const copiedValues = [...followRecommendsValues];
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
 
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: [
-            ...copiedValues[targetIdx].Followers,
-            { id: session?.user?.email as string },
-          ],
-          _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers + 1,
-          },
-        };
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: [{ id: session?.user?.email as string }],
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers + 1,
+            },
+          };
 
-        queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
       }
 
-      const userValues: User[] | undefined = queryClient.getQueryData([
+      const userValues: User | undefined = queryClient.getQueryData([
         "users",
-        user.id,
+        userId,
       ]);
       if (userValues) {
-        const targetIdx = userValues.findIndex((v) => v.id === user.id);
-        const copiedValues = [...userValues];
-
-        copiedValues[targetIdx] = {
-          ...copiedValues[targetIdx],
-          Followers: [
-            ...copiedValues[targetIdx].Followers,
-            { id: session?.user?.email as string },
-          ],
+        const copiedValues = {
+          ...userValues,
+          Followers: [{ id: session?.user?.email as string }],
           _count: {
-            ...copiedValues[targetIdx]._count,
-            Followers: copiedValues[targetIdx]._count.Followers + 1,
+            ...userValues._count,
+            Followers: userValues._count.Followers + 1,
           },
         };
 
-        queryClient.setQueryData(["users", user.id], copiedValues);
+        queryClient.setQueryData(["users", userId], copiedValues);
       }
     },
     onSettled: () => {},
@@ -302,7 +298,7 @@ export default function UserInfo({ username }: Props) {
             <div>@{user.id}</div>
           </div>
 
-          {user.id !== session?.user?.email && (
+          {user.id !== session?.user?.id && (
             <button
               onClick={onFollow}
               className={cx(style.followButton, followed && style.followed)}
