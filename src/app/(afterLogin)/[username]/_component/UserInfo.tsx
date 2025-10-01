@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEventHandler } from "react";
-import { useSession } from "next-auth/react";
 import cx from "classnames";
 
 // component
@@ -10,6 +9,7 @@ import { BackButton } from "@/app/(afterLogin)/_component/Buttons";
 
 // type
 import { User } from "@/model/user";
+import { Session } from "next-auth";
 
 // api
 import { getUser } from "@/app/(afterLogin)/[username]/_lib/getUser";
@@ -19,10 +19,10 @@ import style from "@/app/(afterLogin)/[username]/profile.module.css";
 
 type Props = {
   username: string;
+  session: Session | null;
 };
-export default function UserInfo({ username }: Props) {
+export default function UserInfo({ username, session }: Props) {
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
   const { data: user, error } = useQuery<
     User,
     Object,
@@ -306,6 +306,11 @@ export default function UserInfo({ username }: Props) {
               {followed ? "팔로잉" : "팔로우"}
             </button>
           )}
+        </div>
+        <div className={style.userFollower}>
+          <div>{user._count.Followers} 팔로워</div>
+          &nbsp;
+          <div>{user._count.Followings} 팔로우 중</div>
         </div>
       </div>
     </>

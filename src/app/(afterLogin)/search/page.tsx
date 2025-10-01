@@ -7,9 +7,24 @@ import SearchResult from "./_component/SearchResult";
 // style
 import style from "./search.module.css";
 
+// type
+import { Metadata, ResolvingMetadata } from "next";
+
 type Props = {
   searchParams: Promise<{ q: string; f?: string; pf?: string }>;
+  parent: ResolvingMetadata; // '/search'의 부모('/')의 메타데이터 정보
 };
+
+export async function generateMetadata({
+  searchParams,
+}: Props): Promise<Metadata> {
+  const { q } = await searchParams;
+
+  return {
+    title: `${q} - 검색 / Z`,
+    description: `${q} - 검색 / Z`,
+  };
+}
 
 export default async function Search({ searchParams }: Props) {
   const query = await searchParams;

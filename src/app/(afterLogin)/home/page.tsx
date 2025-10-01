@@ -15,6 +15,14 @@ import { auth } from "@/auth";
 // style
 import style from "./page.module.css";
 
+// type
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "홈 / Z",
+  description: "홈",
+};
+
 export default async function Home() {
   const session = await auth();
 
