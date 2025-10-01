@@ -22,7 +22,6 @@ type Props = {
 
 export default function ActionButtons({ white, post }: Props) {
   const queryClient = useQueryClient();
-  console.log(post);
   const session = useSession();
 
   const commented = post.Comments.find(
