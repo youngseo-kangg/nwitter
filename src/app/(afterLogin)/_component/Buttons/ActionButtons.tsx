@@ -7,7 +7,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import cx from "classnames";
+
+// state
+import { useModalStore } from "@/store/modal";
 
 // style
 import style from "../Post/post.module.css";
@@ -23,6 +27,8 @@ type Props = {
 export default function ActionButtons({ white, post }: Props) {
   const queryClient = useQueryClient();
   const session = useSession();
+  const router = useRouter();
+  const modalStore = useModalStore();
 
   const reposted = post.Reposts?.find(
     (v) => v.userId === session.data?.user?.email
@@ -443,7 +449,15 @@ export default function ActionButtons({ white, post }: Props) {
     },
   });
 
-  const onClickComment = () => {};
+  const onClickComment: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+
+    modalStore.setMode("comment");
+    modalStore.setData(post);
+
+    router.push("/compose/tweet");
+  };
+
   const onClickRepost: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     if (!reposted) {
