@@ -31,6 +31,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${user.nickname}(${user.id}) - Z`,
     description: `${user.nickname}(${user.id})의 프로필에 대해 알아보세요.`,
+    openGraph: {
+      title: `${user.nickname}(${user.id}) - Z`,
+      description: `${user.nickname}(${user.id})의 프로필에 대해 알아보세요.`,
+      images: [
+        {
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}${user.image}`,
+          width: 400,
+          height: 400,
+        },
+      ],
+    },
   };
 }
 
