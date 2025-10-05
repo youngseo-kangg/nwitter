@@ -1,27 +1,52 @@
 "use client";
 
 import TextareaAutosize from "react-textarea-autosize";
-import { ChangeEventHandler, useState } from "react";
+import {
+  ChangeEventHandler,
+  FormEventHandler,
+  useEffect,
+  useState,
+} from "react";
+import { useSession } from "next-auth/react";
+
+// hook
+import useSocket from "../_lib/useSocket";
 
 // style
 import style from "./MessageForm.module.css";
 
-export default function MessageForm() {
+type Props = {
+  id: string;
+};
+export default function MessageForm({ id }: Props) {
   const [content, setContent] = useState("");
-  const onSubmit = () => {};
+  const { data: session } = useSession();
+  const [socket] = useSocket();
+  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    socket?.emit("sendMessage", {
+      senderId: session?.user?.email,
+      receiverId: id,
+      content,
+    });
+    setContent("");
+  };
   const onChangeContent: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     setContent(e.target.value);
   };
   const onEnter = () => {};
+
+  useEffect(() => {
+    socket?.on("receiveMessage", (data) => {});
+
+    return () => {
+      socket?.off("receiveMessage");
+    };
+  }, [socket]);
+
   return (
     <div className={style.formZone}>
-      <form
-        className={style.form}
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-      >
+      <form className={style.form} onSubmit={(e) => onSubmit(e)}>
         <TextareaAutosize
           value={content}
           onChange={onChangeContent}
