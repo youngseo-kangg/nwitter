@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEventHandler } from "react";
 import cx from "classnames";
+import { useRouter } from "next/navigation";
 
 // component
 import { BackButton } from "@/app/(afterLogin)/_component/Buttons";
@@ -22,6 +23,7 @@ type Props = {
   session: Session | null;
 };
 export default function UserInfo({ username, session }: Props) {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { data: user, error } = useQuery<
     User,
@@ -253,6 +255,12 @@ export default function UserInfo({ username, session }: Props) {
     }
   };
 
+  const onMessage = () => {
+    const ids = [session?.user?.email, user.id];
+    ids.sort();
+    router.push(`/messages/${ids.join("-")}`);
+  };
+
   if (error) {
     return (
       <>
@@ -299,12 +307,15 @@ export default function UserInfo({ username, session }: Props) {
           </div>
 
           {user.id !== session?.user?.id && (
-            <button
-              onClick={onFollow}
-              className={cx(style.followButton, followed && style.followed)}
-            >
-              {followed ? "팔로잉" : "팔로우"}
-            </button>
+            <>
+              <button onClick={onMessage}>메세지 보내기</button>
+              <button
+                onClick={onFollow}
+                className={cx(style.followButton, followed && style.followed)}
+              >
+                {followed ? "팔로잉" : "팔로우"}
+              </button>
+            </>
           )}
         </div>
         <div className={style.userFollower}>

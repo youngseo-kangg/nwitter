@@ -9,10 +9,16 @@ import "dayjs/locale/ko";
 dayjs.locale("ko");
 dayjs.extend(relativeTime);
 
+// type
+import { Room as IRoom } from "@/model/room";
+
 // style
 import style from "@/app/(afterLogin)/messages/message.module.css";
 
-export default function Room() {
+type Props = {
+  room: IRoom;
+};
+export default function Room({ room }: Props) {
   const router = useRouter();
   const user = {
     id: "hero",
@@ -24,27 +30,25 @@ export default function Room() {
   };
 
   const onClick = () => {
-    router.push(`/messages/${user.Messages.at(-1)?.roomId}`);
+    router.push(`/messages/${room.room}`);
   };
 
   return (
     <div className={style.room} onClickCapture={onClick}>
       <div className={style.roomUserImage}>
-        <img src={faker.image.avatar()} alt="" />
+        <img src={room.Receiver.image} alt={`${room.Receiver.id}의 이미지`} />
       </div>
       <div className={style.roomChatInfo}>
         <div className={style.roomUserInfo}>
-          <b>{user.nickname}</b>
+          <b>{room.Receiver.nickname}</b>
           &nbsp;
-          <span>@{user.id}</span>
+          <span>@{room.Receiver.id}</span>
           &nbsp; · &nbsp;
           <span className={style.postDate}>
-            {dayjs(user.Messages?.at(-1)?.createdAt).fromNow(true)}
+            {dayjs(room.createdAt).fromNow(true)}
           </span>
         </div>
-        <div className={style.roomLastChat}>
-          {user.Messages?.at(-1)?.content}
-        </div>
+        <div className={style.roomLastChat}>{room.content}</div>
       </div>
     </div>
   );
