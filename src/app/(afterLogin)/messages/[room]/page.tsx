@@ -11,6 +11,7 @@ dayjs.extend(relativeTime);
 // components
 import MessageForm from "./_component/MessageForm";
 import UserInfo from "./_component/UserInfo";
+import WebSocketComponent from "./_component/WebSocketComponent";
 
 // style
 import style from "./chatRoom.module.css";
@@ -51,6 +52,7 @@ export default async function ChatRoom({ params }: Props) {
 
   return (
     <main className={style.main}>
+      <WebSocketComponent />
       <UserInfo id={ids[0]} />
       <div className={style.list}>
         {messages.map((m) => {
