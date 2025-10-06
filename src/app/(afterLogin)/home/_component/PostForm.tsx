@@ -1,28 +1,119 @@
 "use client";
 
-import { ChangeEventHandler, FormEventHandler, useRef, useState } from "react";
-import style from "./postForm.module.css";
-import { useSession } from "next-auth/react";
+import { ChangeEventHandler, FormEvent, useRef, useState } from "react";
+import TextareaAutosize from "react-textarea-autosize";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export default function PostForm() {
+// style
+import style from "./postForm.module.css";
+
+// type
+import { Session } from "next-auth";
+import { Post } from "@/model/post";
+
+type Props = {
+  me: Session | null;
+};
+
+export default function PostForm({ me }: Props) {
   const imageRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
-  const { data: me } = useSession();
+  const [preview, setPreview] = useState<
+    Array<{ dataUrl: string; file: File } | null>
+  >([]);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async (e: FormEvent) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("content", content);
+      preview.forEach((p) => {
+        if (p) {
+          formData.append("images", p.file);
+        }
+      });
+
+      return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
+        method: "post",
+        credentials: "include",
+        body: formData,
+      });
+    },
+    onSuccess: async (response) => {
+      if (response.status === 201) {
+        setContent("");
+        setPreview([]);
+
+        const newPost = await response.json();
+        if (queryClient.getQueryData(["posts", "recommends"])) {
+          queryClient.setQueryData(
+            ["posts", "recommends"],
+            (prevData: { pages: Post[][] }) => {
+              const copiedPages = { ...prevData, pages: [...prevData.pages] };
+
+              copiedPages.pages[0] = [...copiedPages.pages[0]];
+              copiedPages.pages[0].unshift(newPost);
+
+              return copiedPages;
+            }
+          );
+        }
+
+        if (queryClient.getQueryData(["posts", "followings"])) {
+          queryClient.setQueryData(
+            ["posts", "followings"],
+            (prevData: { pages: Post[][] }) => {
+              const copiedPages = { ...prevData, pages: [...prevData.pages] };
+
+              copiedPages.pages[0] = [...copiedPages.pages[0]];
+              copiedPages.pages[0].unshift(newPost);
+
+              return copiedPages;
+            }
+          );
+        }
+      }
+    },
+  });
 
   const onChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     setContent(e.target.value);
-  };
-
-  const onSubmit: FormEventHandler = (e) => {
-    e.preventDefault();
   };
 
   const onClickButton = () => {
     if (imageRef.current) imageRef.current.click();
   };
 
+  const onRemoveImage = (index: number) => () => {
+    setPreview((prevPreview) => {
+      const prev = [...prevPreview];
+      prev[index] = null;
+      return prev;
+    });
+  };
+
+  const onUpload: ChangeEventHandler<HTMLInputElement> = (e) => {
+    e.preventDefault();
+    if (e.target.files) {
+      Array.from(e.target.files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview((prevPreview) => {
+            const prev = [...prevPreview];
+            prev[index] = {
+              dataUrl: reader.result as string,
+              file,
+            };
+            return prev;
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
   return (
-    <form className={style.postForm} onSubmit={onSubmit}>
+    <form className={style.postForm} onSubmit={mutate}>
       <div className={style.postUserSection}>
         <div className={style.postUserImage}>
           <img
@@ -32,11 +123,33 @@ export default function PostForm() {
         </div>
       </div>
       <div className={style.postInputSection}>
-        <textarea
+        <TextareaAutosize
           value={content}
           onChange={onChange}
           placeholder="무슨 일이 일어나고 있나요?"
         />
+        <div style={{ display: "flex" }}>
+          {preview.map(
+            (v, index) =>
+              v && (
+                <div
+                  key={index}
+                  style={{ flex: 1 }}
+                  onClick={onRemoveImage(index)}
+                >
+                  <img
+                    src={v.dataUrl}
+                    alt="미리보기"
+                    style={{
+                      objectFit: "contain",
+                      width: "100%",
+                      maxHeight: 100,
+                    }}
+                  />
+                </div>
+              )
+          )}
+        </div>
         <div className={style.postButtonSection}>
           <div className={style.footerButtons}>
             <div className={style.footerButtonLeft}>
@@ -46,6 +159,7 @@ export default function PostForm() {
                 multiple
                 hidden
                 ref={imageRef}
+                onChange={onUpload}
               />
               <button
                 className={style.uploadButton}

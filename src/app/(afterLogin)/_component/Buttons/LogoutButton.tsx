@@ -3,24 +3,30 @@
 import { useRouter } from "next/navigation";
 
 // api
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 // style
 import style from "./logoutButton.module.css";
 
-export default function LogoutButton() {
+// type
+import { Session } from "next-auth";
+
+type Props = {
+  me: Session | null;
+};
+
+export default function LogoutButton({ me }: Props) {
   const router = useRouter();
-  const { data: me } = useSession();
-  // console.log(me);
-  if (!me?.user) return null;
 
   const onLogout = () => {
-    signOut({
-      redirect: false, // client 컴포넌트에서 서버쪽 리다이렉트 필요 X
-    }).then(() => {
-      router.replace("/"); // client side re-direction
+    signOut({ redirect: false }).then(() => {
+      router.replace("/");
     });
   };
+
+  if (!me?.user) {
+    return null;
+  }
 
   return (
     <button className={style.logOutButton} onClick={onLogout}>

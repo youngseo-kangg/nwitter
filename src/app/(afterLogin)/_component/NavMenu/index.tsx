@@ -118,9 +118,9 @@ export default function NavMenu() {
           </div>
         </Link>
       </li>
-      {me?.user?.id && (
+      {me?.user?.email && (
         <li>
-          <Link href={`/${me.user.id}`}>
+          <Link href={`/${me?.user?.email}`}>
             <div className={style.navPill}>
               {segment === me.user.id ? (
                 <>

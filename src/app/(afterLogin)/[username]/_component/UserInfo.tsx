@@ -1,13 +1,16 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEventHandler } from "react";
+import cx from "classnames";
+import { useRouter } from "next/navigation";
 
 // component
 import { BackButton } from "@/app/(afterLogin)/_component/Buttons";
 
 // type
 import { User } from "@/model/user";
+import { Session } from "next-auth";
 
 // api
 import { getUser } from "@/app/(afterLogin)/[username]/_lib/getUser";
@@ -17,8 +20,11 @@ import style from "@/app/(afterLogin)/[username]/profile.module.css";
 
 type Props = {
   username: string;
+  session: Session | null;
 };
-export default function UserInfo({ username }: Props) {
+export default function UserInfo({ username, session }: Props) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: user, error } = useQuery<
     User,
     Object,
@@ -31,8 +37,229 @@ export default function UserInfo({ username }: Props) {
     gcTime: 60 * 1000 * 5,
   });
 
-  console.log("error");
-  console.dir(error);
+  if (!user) {
+    return null;
+  }
+
+  const followed = user.Followers?.find((v) => v.id === session?.user?.email);
+
+  const follow = useMutation({
+    mutationFn: (userId: string) => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${userId}/follow`,
+        {
+          method: "post",
+          credentials: "include",
+        }
+      );
+    },
+    onMutate: (userId: string) => {
+      const followRecommendsValues: User[] | undefined =
+        queryClient.getQueryData(["users", "followRecommends"]);
+
+      if (followRecommendsValues) {
+        const targetIdx = followRecommendsValues.findIndex(
+          (v) => v.id === user.id
+        );
+
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
+
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: [{ id: session?.user?.email as string }],
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers + 1,
+            },
+          };
+
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
+      }
+
+      const userValues: User | undefined = queryClient.getQueryData([
+        "users",
+        user.id,
+      ]);
+
+      if (userValues) {
+        const copiedValues = {
+          ...userValues,
+          Followers: [{ id: session?.user?.email as string }],
+          _count: {
+            ...userValues._count,
+            Followers: userValues._count.Followers + 1,
+          },
+        };
+
+        queryClient.setQueryData(["users", userId], copiedValues);
+      }
+    },
+    onError: (userId: string) => {
+      const followRecommendsValues: User[] | undefined =
+        queryClient.getQueryData(["users", "followRecommends"]);
+
+      if (followRecommendsValues) {
+        const targetIdx = followRecommendsValues.findIndex(
+          (v) => v.id === user.id
+        );
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
+
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: copiedValues[targetIdx].Followers.filter(
+              (v) => v.id !== (session?.user?.email as string)
+            ),
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers - 1,
+            },
+          };
+
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
+      }
+
+      const userValues: User | undefined = queryClient.getQueryData([
+        "users",
+        userId,
+      ]);
+      if (userValues) {
+        const copiedValues = {
+          ...userValues,
+          Followers: userValues.Followers.filter(
+            (v) => v.id !== (session?.user?.email as string)
+          ),
+          _count: {
+            ...userValues._count,
+            Followers: userValues._count.Followers - 1,
+          },
+        };
+
+        queryClient.setQueryData(["users", userId], copiedValues);
+      }
+    },
+    onSettled: () => {},
+  });
+
+  const unFollow = useMutation({
+    mutationFn: (userId: string) => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${userId}/follow`,
+        {
+          method: "delete",
+          credentials: "include",
+        }
+      );
+    },
+    onMutate: (userId: string) => {
+      const followRecommendsValues: User[] | undefined =
+        queryClient.getQueryData(["users", "followRecommends"]);
+
+      if (followRecommendsValues) {
+        const targetIdx = followRecommendsValues.findIndex(
+          (v) => v.id === user.id
+        );
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
+
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: copiedValues[targetIdx].Followers.filter(
+              (v) => v.id !== (session?.user?.email as string)
+            ),
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers - 1,
+            },
+          };
+
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
+      }
+
+      const userValues: User | undefined = queryClient.getQueryData([
+        "users",
+        userId,
+      ]);
+      if (userValues) {
+        const copiedValues = {
+          ...userValues,
+          Followers: userValues.Followers.filter(
+            (v) => v.id !== (session?.user?.email as string)
+          ),
+          _count: {
+            ...userValues._count,
+            Followers: userValues._count.Followers - 1,
+          },
+        };
+
+        console.log(copiedValues);
+        queryClient.setQueryData(["users", userId], copiedValues);
+      }
+    },
+    onError: (userId: string) => {
+      const followRecommendsValues: User[] | undefined =
+        queryClient.getQueryData(["users", "followRecommends"]);
+
+      if (followRecommendsValues) {
+        const targetIdx = followRecommendsValues.findIndex(
+          (v) => v.id === user.id
+        );
+        if (targetIdx > -1) {
+          const copiedValues = [...followRecommendsValues];
+
+          copiedValues[targetIdx] = {
+            ...copiedValues[targetIdx],
+            Followers: [{ id: session?.user?.email as string }],
+            _count: {
+              ...copiedValues[targetIdx]._count,
+              Followers: copiedValues[targetIdx]._count.Followers + 1,
+            },
+          };
+
+          queryClient.setQueryData(["users", "followRecommends"], copiedValues);
+        }
+      }
+
+      const userValues: User | undefined = queryClient.getQueryData([
+        "users",
+        userId,
+      ]);
+      if (userValues) {
+        const copiedValues = {
+          ...userValues,
+          Followers: [{ id: session?.user?.email as string }],
+          _count: {
+            ...userValues._count,
+            Followers: userValues._count.Followers + 1,
+          },
+        };
+
+        queryClient.setQueryData(["users", userId], copiedValues);
+      }
+    },
+    onSettled: () => {},
+  });
+
+  const onFollow: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (followed) {
+      unFollow.mutate(user.id);
+    } else {
+      follow.mutate(user.id);
+    }
+  };
+
+  const onMessage = () => {
+    const ids = [session?.user?.email, user.id];
+    ids.sort();
+    router.push(`/messages/${ids.join("-")}`);
+  };
 
   if (error) {
     return (
@@ -63,12 +290,6 @@ export default function UserInfo({ username }: Props) {
     );
   }
 
-  if (!user) {
-    return null;
-  }
-
-  const onFollow: MouseEventHandler<HTMLButtonElement> = (e) => {};
-
   return (
     <>
       <div className={style.header}>
@@ -84,9 +305,23 @@ export default function UserInfo({ username }: Props) {
             <div>{user.nickname}</div>
             <div>@{user.id}</div>
           </div>
-          <button onClick={onFollow} className={style.followButton}>
-            팔로우
-          </button>
+
+          {user.id !== session?.user?.id && (
+            <>
+              <button onClick={onMessage}>메세지 보내기</button>
+              <button
+                onClick={onFollow}
+                className={cx(style.followButton, followed && style.followed)}
+              >
+                {followed ? "팔로잉" : "팔로우"}
+              </button>
+            </>
+          )}
+        </div>
+        <div className={style.userFollower}>
+          <div>{user._count.Followers} 팔로워</div>
+          &nbsp;
+          <div>{user._count.Followings} 팔로우 중</div>
         </div>
       </div>
     </>

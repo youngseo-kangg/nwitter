@@ -1,4 +1,4 @@
-import styles from "./home.module.css";
+import styles from "./page.module.css";
 
 export default function Loading() {
   return (

@@ -73,7 +73,7 @@
 
 .main {
   width: 600px;
-  height: 200dvh;
+  height: 100dvh;
   border-top: none;
   border-right: 1px solid rgb(239, 243, 244);
   border-bottom: none; /* 필요 없다면 없애기 */

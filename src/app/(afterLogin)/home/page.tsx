@@ -9,15 +9,28 @@ import Loading from "@/app/(afterLogin)/home/loading";
 // context
 import TabProvider from "@/app/(afterLogin)/home/_component/TabProvider";
 
+// api
+import { auth } from "@/auth";
+
 // style
 import style from "./page.module.css";
 
-export default function Home() {
+// type
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "홈 / Z",
+  description: "홈",
+};
+
+export default async function Home() {
+  const session = await auth();
+
   return (
     <main className={style.main}>
       <TabProvider>
         <Tab />
-        <PostForm />
+        <PostForm me={session} />
         <Suspense fallback={<Loading />}>
           <TabDividerSuspense />
         </Suspense>

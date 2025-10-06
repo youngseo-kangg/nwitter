@@ -13,13 +13,51 @@ import CommentForm from "@/app/(afterLogin)/[username]/status/[id]/_component/Co
 // api
 import { getSinglePost } from "../../../_lib/getSinglePost";
 import { getComments } from "../../../_lib/getComments";
+import { getUserServer } from "../../_lib/getUserServer";
+import { getSinglePostServer } from "@/app/(afterLogin)/_lib/getSinglePostServer";
 
 // style
 import style from "./singlePost.module.css";
 
+// type
+import { Metadata } from "next";
+import { User } from "@/model/user";
+import { Post } from "@/model/post";
+
 type Props = {
-  params: { id: string };
+  params: { id: string; username: string };
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id, username } = await params;
+  const [user, post]: [User, Post] = await Promise.all([
+    getUserServer({ queryKey: ["user", username] }),
+    getSinglePostServer({ queryKey: ["posts", id] }),
+  ]);
+
+  return {
+    title: `Z에서 ${user.nickname} 님 : ${post.content}`,
+    description: post.content,
+    openGraph: {
+      title: `Z에서 ${user.nickname} 님 : ${post.content}`,
+      description: post.content,
+      images:
+        post.Images?.length > 0
+          ? post.Images?.map((v) => ({
+              url: `${process.env.NEXT_PUBLIC_BASE_URL}${v.link}`,
+              width: 600,
+              height: 400,
+            }))
+          : [
+              {
+                url: `${process.env.NEXT_PUBLIC_BASE_URL}${user.image}`,
+                width: 400,
+                height: 400,
+              },
+            ],
+    },
+  };
+}
 
 export default async function Page({ params }: Props) {
   const { id } = await params;

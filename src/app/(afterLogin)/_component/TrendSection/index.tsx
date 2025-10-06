@@ -34,9 +34,12 @@ export default function TrendSection() {
       <div className={style.trendBg}>
         <div className={style.trend}>
           <h3>나를 위한 트렌드</h3>
-          {trendData?.map((trend) => (
-            <Trend trend={trend} key={trend.tagId} />
-          ))}
+          {trendData?.map(
+            (trend) =>
+              trend.tagId && (
+                <Trend key={`trend_${trend.tagId}`} trend={trend} />
+              )
+          )}
         </div>
       </div>
     );
