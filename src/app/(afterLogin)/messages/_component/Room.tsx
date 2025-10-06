@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { faker } from "@faker-js/faker";
+import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
@@ -19,30 +19,24 @@ type Props = {
   room: IRoom;
 };
 export default function Room({ room }: Props) {
+  const { data: session } = useSession();
   const router = useRouter();
-  const user = {
-    id: "hero",
-    nickname: "영웅",
-    Messages: [
-      { roomId: 123, content: "안녕하세요.", createdAt: new Date() },
-      { roomId: 123, content: "안녕히가세요.", createdAt: new Date() },
-    ],
-  };
-
   const onClick = () => {
     router.push(`/messages/${room.room}`);
   };
+  const user =
+    room.Receiver.id === session?.user?.email ? room.Sender : room.Receiver;
 
   return (
     <div className={style.room} onClickCapture={onClick}>
       <div className={style.roomUserImage}>
-        <img src={room.Receiver.image} alt={`${room.Receiver.id}의 이미지`} />
+        <img src={user.image} alt={`${room.Receiver.id}의 이미지`} />
       </div>
       <div className={style.roomChatInfo}>
         <div className={style.roomUserInfo}>
-          <b>{room.Receiver.nickname}</b>
+          <b>{user.nickname}</b>
           &nbsp;
-          <span>@{room.Receiver.id}</span>
+          <span>@{user.id}</span>
           &nbsp; · &nbsp;
           <span className={style.postDate}>
             {dayjs(room.createdAt).fromNow(true)}

@@ -4,10 +4,12 @@ import TextareaAutosize from "react-textarea-autosize";
 import {
   ChangeEventHandler,
   FormEventHandler,
+  KeyboardEventHandler,
   useEffect,
   useState,
 } from "react";
 import { useSession } from "next-auth/react";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 
 // hook
 import useSocket from "../_lib/useSocket";
@@ -15,38 +17,103 @@ import useSocket from "../_lib/useSocket";
 // style
 import style from "./MessageForm.module.css";
 
+// type
+import { Message } from "@/model/message";
+import { useMessageStore } from "@/store/message";
+
 type Props = {
   id: string;
 };
 export default function MessageForm({ id }: Props) {
+  const queryClient = useQueryClient();
   const [content, setContent] = useState("");
+  const setGoDown = useMessageStore().setGoDown;
   const { data: session } = useSession();
   const [socket] = useSocket();
-  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
+
+  const onSubmit = () => {
+    if (!session?.user?.email) {
+      return;
+    }
+    const ids = [session?.user?.email, id];
+    ids.sort();
+
     socket?.emit("sendMessage", {
       senderId: session?.user?.email,
       receiverId: id,
       content,
     });
+
+    // 이전 메세지 query 활용한 optimistic update
+    const exMessages = queryClient.getQueryData([
+      "rooms",
+      {
+        senderId: session?.user?.email,
+        receiverId: id,
+      },
+      "messages",
+    ]) as InfiniteData<Message[]>;
+    if (exMessages && typeof exMessages === "object") {
+      const newMessages = {
+        ...exMessages,
+        pages: [...exMessages.pages],
+      };
+      const lastPage = newMessages.pages.at(-1);
+      const newLastPage = lastPage ? [...lastPage] : [];
+      let lastMessageId = lastPage?.at(-1)?.messageId;
+
+      newLastPage.push({
+        senderId: session.user.email,
+        receiverId: id,
+        content,
+        room: ids.join("-"),
+        messageId: lastMessageId ? lastMessageId + 1 : 1,
+        createdAt: new Date(),
+      });
+
+      newMessages.pages[newMessages.pages.length - 1] = newLastPage;
+      queryClient.setQueryData(
+        [
+          "rooms",
+          {
+            senderId: session?.user?.email,
+            receiverId: id,
+          },
+          "messages",
+        ],
+        newMessages
+      );
+      setGoDown(true);
+    }
+
     setContent("");
   };
   const onChangeContent: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     setContent(e.target.value);
   };
-  const onEnter = () => {};
-
-  useEffect(() => {
-    socket?.on("receiveMessage", (data) => {});
-
-    return () => {
-      socket?.off("receiveMessage");
-    };
-  }, [socket]);
+  const onEnter: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+    if (e.key === "Enter") {
+      if (e.shiftKey) {
+        return;
+      }
+      e.preventDefault();
+      if (!content?.trim()) {
+        return;
+      }
+      onSubmit();
+      setContent("");
+    }
+  };
 
   return (
     <div className={style.formZone}>
-      <form className={style.form} onSubmit={(e) => onSubmit(e)}>
+      <form
+        className={style.form}
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}
+      >
         <TextareaAutosize
           value={content}
           onChange={onChangeContent}
