@@ -18,7 +18,9 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const session = await auth();
-  const rooms = session?.user?.id ? await getRooms(session?.user?.id) : [];
+  const rooms = session?.user?.email
+    ? await getRooms(session?.user?.email)
+    : [];
 
   return (
     <main className={style.main}>

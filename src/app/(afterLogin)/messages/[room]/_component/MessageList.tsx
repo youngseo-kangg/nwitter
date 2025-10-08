@@ -32,17 +32,28 @@ type Props = {
 };
 export default function MessageList({ id }: Props) {
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
+
   const listRef = useRef<HTMLDivElement | null>(null);
+  const [pageRendered, setPageRendered] = useState(false);
+  const [adjustingScroll, setAdjustingScroll] = useState(false);
+
+  const { shouldGoDown, setGoDown } = useMessageStore();
   const { ref, inView } = useInView({
     threshold: 0,
     delay: 0,
   });
 
-  const [pageRendered, setPageRendered] = useState(false);
-  const [adjustingScroll, setAdjustingScroll] = useState(false);
-  const { shouldGoDown, setGoDown } = useMessageStore();
+  useEffect(() => {
+    queryClient.resetQueries({
+      queryKey: [
+        "rooms",
+        { senderId: session?.user?.email!, receiverId: id },
+        "messages",
+      ],
+    });
+  }, [queryClient, session?.user?.email, id]);
 
-  const { data: session } = useSession();
   const {
     data: messages,
     isFetching,
