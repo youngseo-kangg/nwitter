@@ -86,6 +86,23 @@
 .followButton.followed:hover {
   background: lightgray;
 }
+.messageButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(207, 217, 222);
+
+  cursor: pointer;
+  border-radius: 17px;
+  font-size: 15px;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  margin-right: 8px;
+}
+.messageButton:hover {
+  background-color: rgb(15, 20, 25, 0.1);
+}
 .backButton {
   width: 34px;
   height: 34px;
