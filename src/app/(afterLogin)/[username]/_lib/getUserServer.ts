@@ -6,6 +6,7 @@ export const getUserServer = async ({
   queryKey: [string, string];
 }) => {
   const [_1, username] = queryKey;
+  const asyncCookies = await cookies();
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${username}`,
     {
@@ -13,7 +14,7 @@ export const getUserServer = async ({
         tags: ["users", username],
       },
       credentials: "include",
-      headers: { Cookie: (await cookies()).toString() },
+      headers: { Cookie: asyncCookies.toString() },
       cache: "no-store",
     }
   );

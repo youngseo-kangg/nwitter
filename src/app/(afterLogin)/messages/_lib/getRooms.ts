@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { Room } from "@/model/room";
 
 export async function getRooms(id: string) {
+  const asyncCookies = await cookies();
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}/rooms`,
     {
@@ -11,7 +12,7 @@ export async function getRooms(id: string) {
         tags: ["rooms"],
       },
       credentials: "include",
-      headers: { Cookie: cookies().toString() },
+      headers: { Cookie: asyncCookies.toString() },
       cache: "no-store",
     }
   );

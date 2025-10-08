@@ -1,4 +1,3 @@
-import { QueryFunction } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 
 // type
@@ -10,6 +9,7 @@ export const getSinglePostServer = async ({
   queryKey: [_1: string, _2: string];
 }) => {
   const [_1, id] = queryKey;
+  const asyncCookies = await cookies();
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${id}`,
     {
@@ -17,7 +17,7 @@ export const getSinglePostServer = async ({
         tags: ["posts", id],
       },
       credentials: "include",
-      headers: { Cookie: (await cookies()).toString() },
+      headers: { Cookie: asyncCookies.toString() },
     }
   );
   // The return value is *not* serialized
