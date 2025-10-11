@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 // style
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "./globalTheme.css";
 
 // component
 import { MSWProvider } from "@/app/_component/MSWComponent";
