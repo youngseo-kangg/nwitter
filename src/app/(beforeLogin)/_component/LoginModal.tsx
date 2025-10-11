@@ -32,6 +32,17 @@ export default function LoginModal() {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
+    // ✅ Zod 검증 추가
+    const validation = loginSchema.safeParse({ id, password });
+
+    if (!validation.success) {
+      // 첫 번째 에러 메시지만 표시
+      const firstError = validation.error.issues[0]?.message;
+      setMessage(firstError || "입력값이 올바르지 않습니다.");
+      return;
+    }
+
     setMessage("");
     try {
       const result = await signIn("credentials", {
@@ -55,10 +66,12 @@ export default function LoginModal() {
   };
 
   const onChangeId: ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (message) setMessage("");
     setId(e.target.value);
   };
 
   const onChangePassword: ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (message) setMessage("");
     setPassword(e.target.value);
   };
 
