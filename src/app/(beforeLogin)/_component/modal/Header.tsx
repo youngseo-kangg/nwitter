@@ -1,7 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import style from "@/app/(beforeLogin)/_component/modal/modal.module.css";
+
+// style
+import {
+  modalHeader,
+  closeButton,
+} from "@/app/(beforeLogin)/_component/modal/modal.css";
 
 type Props = {
   title: string;
@@ -15,8 +20,8 @@ export default function ModalHeader({ title }: Props) {
   };
 
   return (
-    <div className={style.modalHeader}>
-      <button className={style.closeButton} onClick={onClickClose}>
+    <div className={modalHeader}>
+      <button className={closeButton} onClick={onClickClose}>
         <svg
           width={24}
           viewBox="0 0 24 24"

@@ -1,5 +1,6 @@
-import style from "@/app/(beforeLogin)/_component/modal/modal.module.css";
+// style
+import { message } from "@/app/(beforeLogin)/_component/modal/modal.css";
 
 export default function Message({ msg }: { msg: string }) {
-  return <div className={style.message}>{msg}</div>;
+  return <div className={message}>{msg}</div>;
 }

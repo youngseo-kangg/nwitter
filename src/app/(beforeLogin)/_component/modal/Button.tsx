@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes } from "react";
 
 // style
-import style from "@/app/(beforeLogin)/_component/modal/modal.module.css";
+import { actionButton } from "@/app/(beforeLogin)/_component/modal/modal.css";
 
 type Props = {
   title: string;
@@ -9,7 +9,7 @@ type Props = {
 
 export default function Button({ title, disabled }: Props) {
   return (
-    <button className={style.actionButton} disabled={disabled}>
+    <button className={actionButton} disabled={disabled}>
       {title}
     </button>
   );

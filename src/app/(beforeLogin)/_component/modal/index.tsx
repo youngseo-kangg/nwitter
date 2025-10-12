@@ -1,7 +1,10 @@
 import { FC, HTMLAttributes, PropsWithChildren } from "react";
 
 // style
-import style from "@/app/(beforeLogin)/_component/modal/modal.module.css";
+import {
+  modalBackground,
+  modal,
+} from "@/app/(beforeLogin)/_component/modal/modal.css";
 
 // component
 import Header from "./Header";
@@ -26,8 +29,8 @@ type IModalWrapper = FC<PropsWithChildren<HTMLAttributes<HTMLDivElement>>> & {
 
 const Modal: IModalWrapper = ({ children }) => {
   return (
-    <div className={style.modalBackground}>
-      <div className={style.modal}>{children}</div>
+    <div className={modalBackground}>
+      <div className={modal}>{children}</div>
     </div>
   );
 };

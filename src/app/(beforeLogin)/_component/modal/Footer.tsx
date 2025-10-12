@@ -1,8 +1,8 @@
 import { PropsWithChildren } from "react";
 
 // style
-import style from "@/app/(beforeLogin)/_component/modal/modal.module.css";
+import { modalFooter } from "@/app/(beforeLogin)/_component/modal/modal.css";
 
 export default function Footer({ children }: PropsWithChildren) {
-  return <div className={style.modalFooter}>{children}</div>;
+  return <div className={modalFooter}>{children}</div>;
 }

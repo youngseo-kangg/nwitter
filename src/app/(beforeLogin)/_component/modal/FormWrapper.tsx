@@ -1,8 +1,8 @@
 import { PropsWithChildren } from "react";
 
 // style
-import style from "@/app/(beforeLogin)/_component/modal/modal.module.css";
+import { modalBody } from "@/app/(beforeLogin)/_component/modal/modal.css";
 
 export default function FormWrapper({ children }: PropsWithChildren) {
-  return <div className={style.modalBody}>{children}</div>;
+  return <div className={modalBody}>{children}</div>;
 }
