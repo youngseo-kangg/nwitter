@@ -178,5 +178,5 @@ export const message = style({
 });
 
 export const modalFooter = style({
-  padding: "24px 80px",
+  padding: "24px 0px",
 });

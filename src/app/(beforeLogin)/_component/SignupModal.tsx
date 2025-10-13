@@ -1,30 +1,13 @@
 "use client";
 
-import { useFormStatus, useFormState } from "react-dom";
-import z from "zod";
+import { useFormStatus } from "react-dom";
+import { useActionState } from "react";
 
 // component
 import Modal from "./modal";
 
 // data
 import onSubmit from "../_lib/signup";
-
-// regex
-import { passwordRegex } from "../_config";
-
-// 회원가입 스키마 정의
-const signupSchema = z.object({
-  id: z.string().min(1, { message: "아이디 입력값이 없습니다." }),
-  nickname: z.string().min(1, { message: "닉네임 입력값이 없습니다." }),
-  password: z
-    .string()
-    .min(1, { message: "비밀번호 입력값이 없습니다." })
-    .regex(passwordRegex, {
-      message:
-        "비밀번호는 최소 9자 이상이어야 하며, 숫자, 대문자, 특수문자를 각각 하나 이상 포함해야 합니다.",
-    }),
-  image: z.string().url().optional(), // 이미지 URL (선택 사항)
-});
 
 function showMessage(message: string | null | undefined) {
   if (message === "no_id") {
@@ -50,7 +33,9 @@ function showMessage(message: string | null | undefined) {
 }
 
 export default function SignupModal() {
-  const [state, formAction] = useFormState(onSubmit, { message: null });
+  const [state, formAction] = useActionState(onSubmit, {
+    message: null,
+  });
   const { pending } = useFormStatus();
   console.log("state", state);
 
@@ -97,11 +82,11 @@ export default function SignupModal() {
               required
               defaultValue={state.image as string}
             />
+            <Modal.Footer>
+              <Modal.Button title="가입하기" type="submit" disabled={pending} />
+              <Modal.Message msg={showMessage(state?.message) || ""} />
+            </Modal.Footer>
           </Modal.FormWrapper>
-          <Modal.Footer>
-            <Modal.Button title="가입하기" type="submit" disabled={pending} />
-            <Modal.Message msg={showMessage(state?.message) || ""} />
-          </Modal.Footer>
         </Modal.Form>
       </Modal>
     </>

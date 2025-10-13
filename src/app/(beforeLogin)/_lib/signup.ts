@@ -1,29 +1,33 @@
 "use server";
 
+import z from "zod";
 import { redirect } from "next/navigation";
 import { signIn } from "@/auth";
+import { passwordRegex } from "../_config";
+
+// 회원가입 스키마 정의
+const signupSchema = z.object({
+  id: z.string().min(1, { message: "no_id" }),
+  name: z.string().min(1, { message: "no_name" }),
+  password: z.string().min(1, { message: "no_password" }).regex(passwordRegex, {
+    message:
+      "비밀번호는 최소 9자 이상이어야 하며, 숫자, 대문자, 특수문자를 각각 하나 이상 포함해야 합니다.",
+  }),
+  image: z.string().optional(), // 이미지 URL (선택 사항)
+});
 
 export default async (
   prevState: { message: string | null },
   formData: FormData
 ) => {
-  if (!formData.get("id") || !(formData.get("id") as string)?.trim()) {
-    return { message: "no_id" };
-  }
+  const formValues = Object.fromEntries(formData.entries());
 
-  if (!formData.get("name") || !(formData.get("name") as string)?.trim()) {
-    return { message: "no_name" };
-  }
+  // ✅ Zod로 유효성 검증
+  const parsed = signupSchema.safeParse(formValues);
 
-  if (
-    !formData.get("password") ||
-    !(formData.get("password") as string)?.trim()
-  ) {
-    return { message: "no_password" };
-  }
-
-  if (!formData.get("image")) {
-    return { message: "no_image" };
+  if (!parsed.success) {
+    const message = parsed.error.issues[0]?.message;
+    return { message };
   }
 
   formData.set("nickname", formData.get("name") as string);
@@ -37,7 +41,7 @@ export default async (
         credentials: "include",
       }
     );
-    console.log(response.status);
+
     if (response.status === 403) {
       return { message: "user_exists" };
     } else if (response.status === 400) {
@@ -50,6 +54,7 @@ export default async (
       };
     }
     console.log(await response.json());
+
     shouldRedirect = true;
     await signIn("credentials", {
       username: formData.get("id"),

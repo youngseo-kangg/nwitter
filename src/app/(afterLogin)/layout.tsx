@@ -15,7 +15,7 @@ import RightSearchZone from "./_component/RightSearchZone";
 import FollowRecommendSection from "./_component/FollowRecommendSection";
 
 // style
-import style from "@/app/(afterLogin)/layout.module.css";
+import * as style from "@/app/(afterLogin)/layout.css";
 
 // img
 import ZLogo from "../../../public/zlogo.png";
