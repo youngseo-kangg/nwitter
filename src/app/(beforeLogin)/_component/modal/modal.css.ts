@@ -25,7 +25,7 @@ export const modal = style({
   height: "550px",
 
   "@media": {
-    "(min-width: 466px)": {
+    "(max-width: 600px)": {
       width: "100%",
       minWidth: "auto",
     },
@@ -44,7 +44,7 @@ export const modalHeader = style({
   fontWeight: "bold",
 
   "@media": {
-    "(min-width: 466px)": {
+    "(max-width: 600px)": {
       padding: "26px 50px 16px",
     },
   },
@@ -55,7 +55,7 @@ export const modalBody = style({
   padding: "0 80px",
 
   "@media": {
-    "(min-width: 466px)": {
+    "(max-width: 600px)": {
       padding: "0 30px",
     },
   },

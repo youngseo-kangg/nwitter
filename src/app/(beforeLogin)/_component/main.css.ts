@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 
 export const mainContainer = style({
   display: "flex",
@@ -28,7 +28,7 @@ export const mainLeft = style({
   },
 });
 
-export const mainLeftImg = style({
+globalStyle(`${mainLeft} img`, {
   width: "55px",
   height: "65px",
 
