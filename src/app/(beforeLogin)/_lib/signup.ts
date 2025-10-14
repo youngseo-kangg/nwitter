@@ -27,7 +27,12 @@ export default async (
 
   if (!parsed.success) {
     const message = parsed.error.issues[0]?.message;
-    return { message };
+    return {
+      message,
+      id: formData.get("id"),
+      nickname: formData.get("name"),
+      password: formData.get("password"),
+    };
   }
 
   formData.set("nickname", formData.get("name") as string);
@@ -43,8 +48,14 @@ export default async (
     );
 
     if (response.status === 403) {
-      return { message: "user_exists" };
+      return {
+        message: "user_exists",
+        id: formData.get("id"),
+        nickname: formData.get("nickname"),
+        password: formData.get("password"),
+      };
     } else if (response.status === 400) {
+      // 'nickname must be a string' error
       return {
         message: (await response.json()).data[0],
         id: formData.get("id"),

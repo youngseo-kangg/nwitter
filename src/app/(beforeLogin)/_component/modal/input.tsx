@@ -24,6 +24,7 @@ export default function Input({
   value,
   name,
   previewUrl,
+  defaultValue,
   onChange,
 }: Props) {
   const withPreviewImage = type === "file" && previewUrl;
@@ -58,6 +59,7 @@ export default function Input({
           className={input}
           type={type}
           placeholder={placeholderText}
+          defaultValue={defaultValue}
           value={type === "file" ? undefined : value}
           accept={type === "file" ? "image/*" : undefined}
           onChange={onChange}

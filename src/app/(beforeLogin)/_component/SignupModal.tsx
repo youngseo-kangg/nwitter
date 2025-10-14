@@ -36,8 +36,8 @@ export default function SignupModal() {
   const [state, formAction] = useActionState(onSubmit, {
     message: null,
   });
-  const { pending } = useFormStatus();
   console.log("state", state);
+  const { pending } = useFormStatus();
 
   return (
     <>
@@ -51,7 +51,6 @@ export default function SignupModal() {
               name="id"
               type="text"
               placeholderText=""
-              required
               defaultValue={state.id as string}
             />
             <Modal.Input
@@ -60,7 +59,6 @@ export default function SignupModal() {
               name="name"
               type="text"
               placeholderText=""
-              required
               defaultValue={state.nickname as string}
             />
             <Modal.Input
@@ -69,7 +67,6 @@ export default function SignupModal() {
               name="password"
               type="password"
               placeholderText=""
-              required
               defaultValue={state.password as string}
             />
             <Modal.Input
@@ -79,7 +76,6 @@ export default function SignupModal() {
               type="file"
               accept="image/*"
               placeholderText=""
-              required
               defaultValue={state.image as string}
             />
             <Modal.Footer>
